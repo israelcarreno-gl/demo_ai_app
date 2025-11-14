@@ -79,7 +79,7 @@ class _DocumentUploadScreenState extends State<DocumentUploadScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error al seleccionar archivo: $e'),
+            content: Text('Error selecting file: $e'),
             backgroundColor: Colors.red,
           ),
         );
