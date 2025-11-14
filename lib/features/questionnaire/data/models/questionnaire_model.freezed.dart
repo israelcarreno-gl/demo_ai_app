@@ -22,10 +22,8 @@ QuestionnaireModel _$QuestionnaireModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$QuestionnaireModel {
   String get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'user_id')
   String get userId => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
-  @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
@@ -49,9 +47,9 @@ abstract class $QuestionnaireModelCopyWith<$Res> {
   @useResult
   $Res call({
     String id,
-    @JsonKey(name: 'user_id') String userId,
+    String userId,
     String title,
-    @JsonKey(name: 'created_at') DateTime createdAt,
+    DateTime createdAt,
     String? description,
     String status,
   });
@@ -122,9 +120,9 @@ abstract class _$$QuestionnaireModelImplCopyWith<$Res>
   @useResult
   $Res call({
     String id,
-    @JsonKey(name: 'user_id') String userId,
+    String userId,
     String title,
-    @JsonKey(name: 'created_at') DateTime createdAt,
+    DateTime createdAt,
     String? description,
     String status,
   });
@@ -187,9 +185,9 @@ class __$$QuestionnaireModelImplCopyWithImpl<$Res>
 class _$QuestionnaireModelImpl extends _QuestionnaireModel {
   const _$QuestionnaireModelImpl({
     required this.id,
-    @JsonKey(name: 'user_id') required this.userId,
+    required this.userId,
     required this.title,
-    @JsonKey(name: 'created_at') required this.createdAt,
+    required this.createdAt,
     this.description,
     this.status = 'draft',
   }) : super._();
@@ -200,12 +198,10 @@ class _$QuestionnaireModelImpl extends _QuestionnaireModel {
   @override
   final String id;
   @override
-  @JsonKey(name: 'user_id')
   final String userId;
   @override
   final String title;
   @override
-  @JsonKey(name: 'created_at')
   final DateTime createdAt;
   @override
   final String? description;
@@ -265,9 +261,9 @@ class _$QuestionnaireModelImpl extends _QuestionnaireModel {
 abstract class _QuestionnaireModel extends QuestionnaireModel {
   const factory _QuestionnaireModel({
     required final String id,
-    @JsonKey(name: 'user_id') required final String userId,
+    required final String userId,
     required final String title,
-    @JsonKey(name: 'created_at') required final DateTime createdAt,
+    required final DateTime createdAt,
     final String? description,
     final String status,
   }) = _$QuestionnaireModelImpl;
@@ -279,12 +275,10 @@ abstract class _QuestionnaireModel extends QuestionnaireModel {
   @override
   String get id;
   @override
-  @JsonKey(name: 'user_id')
   String get userId;
   @override
   String get title;
   @override
-  @JsonKey(name: 'created_at')
   DateTime get createdAt;
   @override
   String? get description;

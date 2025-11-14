@@ -10,9 +10,9 @@ _$QuestionnaireModelImpl _$$QuestionnaireModelImplFromJson(
   Map<String, dynamic> json,
 ) => _$QuestionnaireModelImpl(
   id: json['id'] as String,
-  userId: json['user_id'] as String,
+  userId: json['userId'] as String,
   title: json['title'] as String,
-  createdAt: DateTime.parse(json['created_at'] as String),
+  createdAt: DateTime.parse(json['createdAt'] as String),
   description: json['description'] as String?,
   status: json['status'] as String? ?? 'draft',
 );
@@ -21,9 +21,9 @@ Map<String, dynamic> _$$QuestionnaireModelImplToJson(
   _$QuestionnaireModelImpl instance,
 ) => <String, dynamic>{
   'id': instance.id,
-  'user_id': instance.userId,
+  'userId': instance.userId,
   'title': instance.title,
-  'created_at': instance.createdAt.toIso8601String(),
+  'createdAt': instance.createdAt.toIso8601String(),
   'description': instance.description,
   'status': instance.status,
 };

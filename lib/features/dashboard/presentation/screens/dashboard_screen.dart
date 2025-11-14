@@ -1,9 +1,11 @@
+import 'package:demoai/core/router/app_router.dart';
 import 'package:demoai/core/widgets/confirmation_dialog.dart';
 import 'package:demoai/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:demoai/features/dashboard/presentation/widgets/activity_section.dart';
 import 'package:demoai/features/dashboard/presentation/widgets/stat_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -156,7 +158,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   height: 48,
                   child: ElevatedButton(
                     onPressed: () {
-                      // TODO(Isra): Implement file picker.
+                      context.push(AppRoutes.documentUpload);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2563EB),
