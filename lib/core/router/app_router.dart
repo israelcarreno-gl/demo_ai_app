@@ -1,15 +1,20 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:demoai/core/di/injection_container.dart';
 import 'package:demoai/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:demoai/features/auth/presentation/screens/login_screen.dart';
 import 'package:demoai/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:demoai/features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:demoai/features/demo/presentation/screens/demo_screen.dart';
 import 'package:demoai/features/demo/presentation/screens/detail_screen.dart';
+import 'package:demoai/features/questionnaire/data/models/questionnaire_model.dart';
+import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_bloc.dart';
 import 'package:demoai/features/questionnaire/presentation/screens/document_upload_screen.dart';
+import 'package:demoai/features/questionnaire/presentation/screens/questionnaire_detail_screen.dart';
 import 'package:demoai/features/questionnaire/presentation/screens/questionnaire_options_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRoutes {
@@ -20,6 +25,7 @@ class AppRoutes {
   static const String detail = '/detail';
   static const String documentUpload = '/document-upload';
   static const String questionnaireOptions = '/questionnaire-options';
+  static const String questionnaireDetail = '/questionnaire-detail';
 }
 
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -101,12 +107,23 @@ class AppRouter {
         name: 'questionnaireOptions',
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>?;
-          return QuestionnaireOptionsScreen(
-            documentFile: extra?['file'] as File,
-            fileName: extra?['fileName'] as String,
-            fileSize: extra?['fileSize'] as int,
-            fileType: extra?['fileType'] as String,
+          return BlocProvider(
+            create: (context) => getIt<QuestionnaireBloc>(),
+            child: QuestionnaireOptionsScreen(
+              documentFile: extra?['file'] as File,
+              fileName: extra?['fileName'] as String,
+              fileSize: extra?['fileSize'] as int,
+              fileType: extra?['fileType'] as String,
+            ),
           );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.questionnaireDetail,
+        name: 'questionnaireDetail',
+        builder: (context, state) {
+          final questionnaire = state.extra as QuestionnaireModel;
+          return QuestionnaireDetailScreen(questionnaire: questionnaire);
         },
       ),
     ],

@@ -4,6 +4,7 @@ import 'package:demoai/core/l10n/locale_cubit.dart';
 import 'package:demoai/core/network/dio_client.dart';
 import 'package:demoai/core/observers/app_bloc_observer.dart';
 import 'package:demoai/core/services/env_loader_service.dart';
+import 'package:demoai/core/services/storage_service.dart';
 import 'package:demoai/core/services/supabase_service.dart';
 import 'package:demoai/core/theme/theme_cubit.dart';
 import 'package:demoai/features/auth/data/repositories/auth_repository_impl.dart';
@@ -17,6 +18,12 @@ import 'package:demoai/features/demo/domain/repositories/joke_repository.dart';
 import 'package:demoai/features/demo/domain/usecases/get_jokes_by_type.dart';
 import 'package:demoai/features/demo/domain/usecases/get_random_joke.dart';
 import 'package:demoai/features/demo/presentation/bloc/joke_bloc.dart';
+import 'package:demoai/features/questionnaire/data/repositories/questionnaire_repository_impl.dart';
+import 'package:demoai/features/questionnaire/domain/repositories/questionnaire_repository.dart';
+import 'package:demoai/features/questionnaire/domain/usecases/generate_questionnaire.dart';
+import 'package:demoai/features/questionnaire/domain/usecases/get_questionnaire_by_id.dart';
+import 'package:demoai/features/questionnaire/domain/usecases/upload_document.dart';
+import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
@@ -82,12 +89,44 @@ Future<void> initializeDependencies({Environment? initialEnvironment}) async {
     () => SupabaseService(getIt<AppConfig>()),
   );
 
+  // Storage
+  getIt.registerLazySingleton<StorageService>(
+    () => StorageService(getIt<SupabaseService>().client),
+  );
+
   // Auth
   getIt.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(getIt<SupabaseService>()),
   );
 
   getIt.registerFactory<AuthBloc>(() => AuthBloc(getIt<AuthRepository>()));
+
+  // Questionnaire
+  getIt.registerLazySingleton<QuestionnaireRepository>(
+    () => QuestionnaireRepositoryImpl(getIt<SupabaseService>()),
+  );
+
+  // Questionnaire Use Cases
+  getIt.registerLazySingleton<GenerateQuestionnaire>(
+    () => GenerateQuestionnaire(getIt<QuestionnaireRepository>()),
+  );
+
+  getIt.registerLazySingleton<GetQuestionnaireById>(
+    () => GetQuestionnaireById(getIt<QuestionnaireRepository>()),
+  );
+
+  getIt.registerLazySingleton<UploadDocument>(
+    () => UploadDocument(getIt<StorageService>()),
+  );
+
+  // Questionnaire BLoC
+  getIt.registerFactory<QuestionnaireBloc>(
+    () => QuestionnaireBloc(
+      generateQuestionnaire: getIt<GenerateQuestionnaire>(),
+      uploadDocument: getIt<UploadDocument>(),
+      getQuestionnaireById: getIt<GetQuestionnaireById>(),
+    ),
+  );
 
   // Demo Feature
   // Data sources

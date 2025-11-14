@@ -15,21 +15,19 @@ final _privateConstructorUsedError = UnsupportedError(
   'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
 );
 
-QuestionnaireModel _$QuestionnaireModelFromJson(Map<String, dynamic> json) {
-  return _QuestionnaireModel.fromJson(json);
-}
-
 /// @nodoc
 mixin _$QuestionnaireModel {
   String get id => throw _privateConstructorUsedError;
   String get userId => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
+  DateTime? get updatedAt => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
-
-  /// Serializes this QuestionnaireModel to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  String? get documentName => throw _privateConstructorUsedError;
+  int? get documentSize => throw _privateConstructorUsedError;
+  String? get documentType => throw _privateConstructorUsedError;
+  List<QuestionModel>? get questions => throw _privateConstructorUsedError;
 
   /// Create a copy of QuestionnaireModel
   /// with the given fields replaced by the non-null parameter values.
@@ -50,8 +48,13 @@ abstract class $QuestionnaireModelCopyWith<$Res> {
     String userId,
     String title,
     DateTime createdAt,
+    DateTime? updatedAt,
     String? description,
     String status,
+    String? documentName,
+    int? documentSize,
+    String? documentType,
+    List<QuestionModel>? questions,
   });
 }
 
@@ -74,8 +77,13 @@ class _$QuestionnaireModelCopyWithImpl<$Res, $Val extends QuestionnaireModel>
     Object? userId = null,
     Object? title = null,
     Object? createdAt = null,
+    Object? updatedAt = freezed,
     Object? description = freezed,
     Object? status = null,
+    Object? documentName = freezed,
+    Object? documentSize = freezed,
+    Object? documentType = freezed,
+    Object? questions = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -95,6 +103,10 @@ class _$QuestionnaireModelCopyWithImpl<$Res, $Val extends QuestionnaireModel>
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
                       as DateTime,
+            updatedAt: freezed == updatedAt
+                ? _value.updatedAt
+                : updatedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
             description: freezed == description
                 ? _value.description
                 : description // ignore: cast_nullable_to_non_nullable
@@ -103,6 +115,22 @@ class _$QuestionnaireModelCopyWithImpl<$Res, $Val extends QuestionnaireModel>
                 ? _value.status
                 : status // ignore: cast_nullable_to_non_nullable
                       as String,
+            documentName: freezed == documentName
+                ? _value.documentName
+                : documentName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            documentSize: freezed == documentSize
+                ? _value.documentSize
+                : documentSize // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            documentType: freezed == documentType
+                ? _value.documentType
+                : documentType // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            questions: freezed == questions
+                ? _value.questions
+                : questions // ignore: cast_nullable_to_non_nullable
+                      as List<QuestionModel>?,
           )
           as $Val,
     );
@@ -123,8 +151,13 @@ abstract class _$$QuestionnaireModelImplCopyWith<$Res>
     String userId,
     String title,
     DateTime createdAt,
+    DateTime? updatedAt,
     String? description,
     String status,
+    String? documentName,
+    int? documentSize,
+    String? documentType,
+    List<QuestionModel>? questions,
   });
 }
 
@@ -146,8 +179,13 @@ class __$$QuestionnaireModelImplCopyWithImpl<$Res>
     Object? userId = null,
     Object? title = null,
     Object? createdAt = null,
+    Object? updatedAt = freezed,
     Object? description = freezed,
     Object? status = null,
+    Object? documentName = freezed,
+    Object? documentSize = freezed,
+    Object? documentType = freezed,
+    Object? questions = freezed,
   }) {
     return _then(
       _$QuestionnaireModelImpl(
@@ -167,6 +205,10 @@ class __$$QuestionnaireModelImplCopyWithImpl<$Res>
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
                   as DateTime,
+        updatedAt: freezed == updatedAt
+            ? _value.updatedAt
+            : updatedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
         description: freezed == description
             ? _value.description
             : description // ignore: cast_nullable_to_non_nullable
@@ -175,25 +217,44 @@ class __$$QuestionnaireModelImplCopyWithImpl<$Res>
             ? _value.status
             : status // ignore: cast_nullable_to_non_nullable
                   as String,
+        documentName: freezed == documentName
+            ? _value.documentName
+            : documentName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        documentSize: freezed == documentSize
+            ? _value.documentSize
+            : documentSize // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        documentType: freezed == documentType
+            ? _value.documentType
+            : documentType // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        questions: freezed == questions
+            ? _value._questions
+            : questions // ignore: cast_nullable_to_non_nullable
+                  as List<QuestionModel>?,
       ),
     );
   }
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _$QuestionnaireModelImpl extends _QuestionnaireModel {
   const _$QuestionnaireModelImpl({
     required this.id,
     required this.userId,
     required this.title,
     required this.createdAt,
+    this.updatedAt,
     this.description,
     this.status = 'draft',
-  }) : super._();
-
-  factory _$QuestionnaireModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$QuestionnaireModelImplFromJson(json);
+    this.documentName,
+    this.documentSize,
+    this.documentType,
+    final List<QuestionModel>? questions,
+  }) : _questions = questions,
+       super._();
 
   @override
   final String id;
@@ -204,14 +265,31 @@ class _$QuestionnaireModelImpl extends _QuestionnaireModel {
   @override
   final DateTime createdAt;
   @override
+  final DateTime? updatedAt;
+  @override
   final String? description;
   @override
   @JsonKey()
   final String status;
+  @override
+  final String? documentName;
+  @override
+  final int? documentSize;
+  @override
+  final String? documentType;
+  final List<QuestionModel>? _questions;
+  @override
+  List<QuestionModel>? get questions {
+    final value = _questions;
+    if (value == null) return null;
+    if (_questions is EqualUnmodifiableListView) return _questions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'QuestionnaireModel(id: $id, userId: $userId, title: $title, createdAt: $createdAt, description: $description, status: $status)';
+    return 'QuestionnaireModel(id: $id, userId: $userId, title: $title, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, status: $status, documentName: $documentName, documentSize: $documentSize, documentType: $documentType, questions: $questions)';
   }
 
   @override
@@ -224,12 +302,23 @@ class _$QuestionnaireModelImpl extends _QuestionnaireModel {
             (identical(other.title, title) || other.title == title) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt) &&
             (identical(other.description, description) ||
                 other.description == description) &&
-            (identical(other.status, status) || other.status == status));
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.documentName, documentName) ||
+                other.documentName == documentName) &&
+            (identical(other.documentSize, documentSize) ||
+                other.documentSize == documentSize) &&
+            (identical(other.documentType, documentType) ||
+                other.documentType == documentType) &&
+            const DeepCollectionEquality().equals(
+              other._questions,
+              _questions,
+            ));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
     runtimeType,
@@ -237,8 +326,13 @@ class _$QuestionnaireModelImpl extends _QuestionnaireModel {
     userId,
     title,
     createdAt,
+    updatedAt,
     description,
     status,
+    documentName,
+    documentSize,
+    documentType,
+    const DeepCollectionEquality().hash(_questions),
   );
 
   /// Create a copy of QuestionnaireModel
@@ -251,11 +345,6 @@ class _$QuestionnaireModelImpl extends _QuestionnaireModel {
         this,
         _$identity,
       );
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$QuestionnaireModelImplToJson(this);
-  }
 }
 
 abstract class _QuestionnaireModel extends QuestionnaireModel {
@@ -264,13 +353,15 @@ abstract class _QuestionnaireModel extends QuestionnaireModel {
     required final String userId,
     required final String title,
     required final DateTime createdAt,
+    final DateTime? updatedAt,
     final String? description,
     final String status,
+    final String? documentName,
+    final int? documentSize,
+    final String? documentType,
+    final List<QuestionModel>? questions,
   }) = _$QuestionnaireModelImpl;
   const _QuestionnaireModel._() : super._();
-
-  factory _QuestionnaireModel.fromJson(Map<String, dynamic> json) =
-      _$QuestionnaireModelImpl.fromJson;
 
   @override
   String get id;
@@ -281,9 +372,19 @@ abstract class _QuestionnaireModel extends QuestionnaireModel {
   @override
   DateTime get createdAt;
   @override
+  DateTime? get updatedAt;
+  @override
   String? get description;
   @override
   String get status;
+  @override
+  String? get documentName;
+  @override
+  int? get documentSize;
+  @override
+  String? get documentType;
+  @override
+  List<QuestionModel>? get questions;
 
   /// Create a copy of QuestionnaireModel
   /// with the given fields replaced by the non-null parameter values.

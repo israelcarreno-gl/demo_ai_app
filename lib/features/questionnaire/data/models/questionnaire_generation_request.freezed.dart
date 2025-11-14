@@ -23,20 +23,12 @@ QuestionnaireGenerationRequest _$QuestionnaireGenerationRequestFromJson(
 
 /// @nodoc
 mixin _$QuestionnaireGenerationRequest {
-  @JsonKey(includeToJson: false, includeFromJson: false)
-  File? get documentFile => throw _privateConstructorUsedError;
-  @JsonKey(name: 'document_name')
   String get documentName => throw _privateConstructorUsedError;
-  @JsonKey(name: 'document_size')
   int get documentSize => throw _privateConstructorUsedError;
-  @JsonKey(name: 'document_type')
   String get documentType => throw _privateConstructorUsedError;
-  @JsonKey(name: 'question_type')
   QuestionType get questionType => throw _privateConstructorUsedError;
-  @JsonKey(name: 'number_of_questions')
   int get numberOfQuestions => throw _privateConstructorUsedError;
   QuestionDifficulty get difficulty => throw _privateConstructorUsedError;
-  @JsonKey(name: 'user_id')
   String get userId => throw _privateConstructorUsedError;
 
   /// Serializes this QuestionnaireGenerationRequest to a JSON map.
@@ -61,14 +53,13 @@ abstract class $QuestionnaireGenerationRequestCopyWith<$Res> {
       >;
   @useResult
   $Res call({
-    @JsonKey(includeToJson: false, includeFromJson: false) File? documentFile,
-    @JsonKey(name: 'document_name') String documentName,
-    @JsonKey(name: 'document_size') int documentSize,
-    @JsonKey(name: 'document_type') String documentType,
-    @JsonKey(name: 'question_type') QuestionType questionType,
-    @JsonKey(name: 'number_of_questions') int numberOfQuestions,
+    String documentName,
+    int documentSize,
+    String documentType,
+    QuestionType questionType,
+    int numberOfQuestions,
     QuestionDifficulty difficulty,
-    @JsonKey(name: 'user_id') String userId,
+    String userId,
   });
 }
 
@@ -90,7 +81,6 @@ class _$QuestionnaireGenerationRequestCopyWithImpl<
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? documentFile = freezed,
     Object? documentName = null,
     Object? documentSize = null,
     Object? documentType = null,
@@ -101,10 +91,6 @@ class _$QuestionnaireGenerationRequestCopyWithImpl<
   }) {
     return _then(
       _value.copyWith(
-            documentFile: freezed == documentFile
-                ? _value.documentFile
-                : documentFile // ignore: cast_nullable_to_non_nullable
-                      as File?,
             documentName: null == documentName
                 ? _value.documentName
                 : documentName // ignore: cast_nullable_to_non_nullable
@@ -149,14 +135,13 @@ abstract class _$$QuestionnaireGenerationRequestImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    @JsonKey(includeToJson: false, includeFromJson: false) File? documentFile,
-    @JsonKey(name: 'document_name') String documentName,
-    @JsonKey(name: 'document_size') int documentSize,
-    @JsonKey(name: 'document_type') String documentType,
-    @JsonKey(name: 'question_type') QuestionType questionType,
-    @JsonKey(name: 'number_of_questions') int numberOfQuestions,
+    String documentName,
+    int documentSize,
+    String documentType,
+    QuestionType questionType,
+    int numberOfQuestions,
     QuestionDifficulty difficulty,
-    @JsonKey(name: 'user_id') String userId,
+    String userId,
   });
 }
 
@@ -178,7 +163,6 @@ class __$$QuestionnaireGenerationRequestImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? documentFile = freezed,
     Object? documentName = null,
     Object? documentSize = null,
     Object? documentType = null,
@@ -189,10 +173,6 @@ class __$$QuestionnaireGenerationRequestImplCopyWithImpl<$Res>
   }) {
     return _then(
       _$QuestionnaireGenerationRequestImpl(
-        documentFile: freezed == documentFile
-            ? _value.documentFile
-            : documentFile // ignore: cast_nullable_to_non_nullable
-                  as File?,
         documentName: null == documentName
             ? _value.documentName
             : documentName // ignore: cast_nullable_to_non_nullable
@@ -231,14 +211,13 @@ class __$$QuestionnaireGenerationRequestImplCopyWithImpl<$Res>
 class _$QuestionnaireGenerationRequestImpl
     implements _QuestionnaireGenerationRequest {
   const _$QuestionnaireGenerationRequestImpl({
-    @JsonKey(includeToJson: false, includeFromJson: false) this.documentFile,
-    @JsonKey(name: 'document_name') required this.documentName,
-    @JsonKey(name: 'document_size') required this.documentSize,
-    @JsonKey(name: 'document_type') required this.documentType,
-    @JsonKey(name: 'question_type') required this.questionType,
-    @JsonKey(name: 'number_of_questions') required this.numberOfQuestions,
+    required this.documentName,
+    required this.documentSize,
+    required this.documentType,
+    required this.questionType,
+    required this.numberOfQuestions,
     required this.difficulty,
-    @JsonKey(name: 'user_id') required this.userId,
+    required this.userId,
   });
 
   factory _$QuestionnaireGenerationRequestImpl.fromJson(
@@ -246,32 +225,23 @@ class _$QuestionnaireGenerationRequestImpl
   ) => _$$QuestionnaireGenerationRequestImplFromJson(json);
 
   @override
-  @JsonKey(includeToJson: false, includeFromJson: false)
-  final File? documentFile;
-  @override
-  @JsonKey(name: 'document_name')
   final String documentName;
   @override
-  @JsonKey(name: 'document_size')
   final int documentSize;
   @override
-  @JsonKey(name: 'document_type')
   final String documentType;
   @override
-  @JsonKey(name: 'question_type')
   final QuestionType questionType;
   @override
-  @JsonKey(name: 'number_of_questions')
   final int numberOfQuestions;
   @override
   final QuestionDifficulty difficulty;
   @override
-  @JsonKey(name: 'user_id')
   final String userId;
 
   @override
   String toString() {
-    return 'QuestionnaireGenerationRequest(documentFile: $documentFile, documentName: $documentName, documentSize: $documentSize, documentType: $documentType, questionType: $questionType, numberOfQuestions: $numberOfQuestions, difficulty: $difficulty, userId: $userId)';
+    return 'QuestionnaireGenerationRequest(documentName: $documentName, documentSize: $documentSize, documentType: $documentType, questionType: $questionType, numberOfQuestions: $numberOfQuestions, difficulty: $difficulty, userId: $userId)';
   }
 
   @override
@@ -279,8 +249,6 @@ class _$QuestionnaireGenerationRequestImpl
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$QuestionnaireGenerationRequestImpl &&
-            (identical(other.documentFile, documentFile) ||
-                other.documentFile == documentFile) &&
             (identical(other.documentName, documentName) ||
                 other.documentName == documentName) &&
             (identical(other.documentSize, documentSize) ||
@@ -300,7 +268,6 @@ class _$QuestionnaireGenerationRequestImpl
   @override
   int get hashCode => Object.hash(
     runtimeType,
-    documentFile,
     documentName,
     documentSize,
     documentType,
@@ -332,42 +299,31 @@ class _$QuestionnaireGenerationRequestImpl
 abstract class _QuestionnaireGenerationRequest
     implements QuestionnaireGenerationRequest {
   const factory _QuestionnaireGenerationRequest({
-    @JsonKey(includeToJson: false, includeFromJson: false)
-    final File? documentFile,
-    @JsonKey(name: 'document_name') required final String documentName,
-    @JsonKey(name: 'document_size') required final int documentSize,
-    @JsonKey(name: 'document_type') required final String documentType,
-    @JsonKey(name: 'question_type') required final QuestionType questionType,
-    @JsonKey(name: 'number_of_questions') required final int numberOfQuestions,
+    required final String documentName,
+    required final int documentSize,
+    required final String documentType,
+    required final QuestionType questionType,
+    required final int numberOfQuestions,
     required final QuestionDifficulty difficulty,
-    @JsonKey(name: 'user_id') required final String userId,
+    required final String userId,
   }) = _$QuestionnaireGenerationRequestImpl;
 
   factory _QuestionnaireGenerationRequest.fromJson(Map<String, dynamic> json) =
       _$QuestionnaireGenerationRequestImpl.fromJson;
 
   @override
-  @JsonKey(includeToJson: false, includeFromJson: false)
-  File? get documentFile;
-  @override
-  @JsonKey(name: 'document_name')
   String get documentName;
   @override
-  @JsonKey(name: 'document_size')
   int get documentSize;
   @override
-  @JsonKey(name: 'document_type')
   String get documentType;
   @override
-  @JsonKey(name: 'question_type')
   QuestionType get questionType;
   @override
-  @JsonKey(name: 'number_of_questions')
   int get numberOfQuestions;
   @override
   QuestionDifficulty get difficulty;
   @override
-  @JsonKey(name: 'user_id')
   String get userId;
 
   /// Create a copy of QuestionnaireGenerationRequest
