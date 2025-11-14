@@ -1,11 +1,10 @@
+import 'package:demoai/core/config/app_config.dart';
 import 'package:dio/dio.dart';
-import 'package:gist/core/config/app_config.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 /// Dio client configuration
 /// Provides a configured Dio instance for HTTP requests
 class DioClient {
-
   DioClient(this._config) {
     _dio = Dio(
       BaseOptions(
@@ -22,10 +21,7 @@ class DioClient {
     // Add logger interceptor only for non-production environments
     if (_config.enableLogger) {
       _dio.interceptors.add(
-        PrettyDioLogger(
-          requestHeader: true,
-          requestBody: true,
-        ),
+        PrettyDioLogger(requestHeader: true, requestBody: true),
       );
     }
   }

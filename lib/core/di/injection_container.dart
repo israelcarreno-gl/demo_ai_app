@@ -1,20 +1,24 @@
+import 'package:demoai/core/config/app_config.dart';
+import 'package:demoai/core/config/environment_manager.dart';
+import 'package:demoai/core/l10n/locale_cubit.dart';
+import 'package:demoai/core/network/dio_client.dart';
+import 'package:demoai/core/observers/app_bloc_observer.dart';
+import 'package:demoai/core/services/env_loader_service.dart';
+import 'package:demoai/core/services/supabase_service.dart';
+import 'package:demoai/core/theme/theme_cubit.dart';
+import 'package:demoai/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:demoai/features/auth/domain/repositories/auth_repository.dart';
+import 'package:demoai/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:demoai/features/demo/data/datasources/joke_api_service.dart';
+import 'package:demoai/features/demo/data/datasources/joke_remote_data_source.dart';
+import 'package:demoai/features/demo/data/datasources/joke_remote_data_source_impl.dart';
+import 'package:demoai/features/demo/data/repositories/joke_repository_impl.dart';
+import 'package:demoai/features/demo/domain/repositories/joke_repository.dart';
+import 'package:demoai/features/demo/domain/usecases/get_jokes_by_type.dart';
+import 'package:demoai/features/demo/domain/usecases/get_random_joke.dart';
+import 'package:demoai/features/demo/presentation/bloc/joke_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
-import 'package:gist/core/config/app_config.dart';
-import 'package:gist/core/config/environment_manager.dart';
-import 'package:gist/core/l10n/locale_cubit.dart';
-import 'package:gist/core/network/dio_client.dart';
-import 'package:gist/core/observers/app_bloc_observer.dart';
-import 'package:gist/core/services/env_loader_service.dart';
-import 'package:gist/core/theme/theme_cubit.dart';
-import 'package:gist/features/demo/data/datasources/joke_api_service.dart';
-import 'package:gist/features/demo/data/datasources/joke_remote_data_source.dart';
-import 'package:gist/features/demo/data/datasources/joke_remote_data_source_impl.dart';
-import 'package:gist/features/demo/data/repositories/joke_repository_impl.dart';
-import 'package:gist/features/demo/domain/repositories/joke_repository.dart';
-import 'package:gist/features/demo/domain/usecases/get_jokes_by_type.dart';
-import 'package:gist/features/demo/domain/usecases/get_random_joke.dart';
-import 'package:gist/features/demo/presentation/bloc/joke_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -72,6 +76,18 @@ Future<void> initializeDependencies({Environment? initialEnvironment}) async {
   getIt.registerLazySingleton<LocaleCubit>(
     () => LocaleCubit(getIt<SharedPreferences>()),
   );
+
+  // Supabase
+  getIt.registerLazySingleton<SupabaseService>(
+    () => SupabaseService(getIt<AppConfig>()),
+  );
+
+  // Auth
+  getIt.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(getIt<SupabaseService>()),
+  );
+
+  getIt.registerFactory<AuthBloc>(() => AuthBloc(getIt<AuthRepository>()));
 
   // Demo Feature
   // Data sources

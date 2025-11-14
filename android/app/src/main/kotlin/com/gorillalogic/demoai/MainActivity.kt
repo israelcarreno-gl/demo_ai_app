@@ -1,4 +1,4 @@
-package com.example.gist
+package com.gorillalogic.demoai
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,17 +1,17 @@
+import 'package:demoai/core/config/app_config.dart';
+import 'package:demoai/core/config/app_theme.dart';
+import 'package:demoai/core/config/environment_manager.dart';
+import 'package:demoai/core/di/injection_container.dart';
+import 'package:demoai/core/l10n/app_localizations.dart';
+import 'package:demoai/core/l10n/locale_cubit.dart';
+import 'package:demoai/core/router/app_router.dart';
+import 'package:demoai/core/theme/theme_cubit.dart';
+import 'package:demoai/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:gist/core/config/app_config.dart';
-import 'package:gist/core/config/app_theme.dart';
-import 'package:gist/core/config/environment_manager.dart';
-import 'package:gist/core/di/injection_container.dart';
-import 'package:gist/core/l10n/app_localizations.dart';
-import 'package:gist/core/l10n/locale_cubit.dart';
-import 'package:gist/core/router/app_router.dart';
-import 'package:gist/core/theme/theme_cubit.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Main application widget
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider.value(value: getIt<ThemeCubit>()),
         BlocProvider.value(value: getIt<LocaleCubit>()),
+        BlocProvider(create: (_) => getIt<AuthBloc>()),
       ],
       child: BlocBuilder<LocaleCubit, Locale>(
         builder: (context, locale) {
@@ -36,7 +37,6 @@ class MyApp extends StatelessWidget {
                     debugShowCheckedModeBanner: false,
                     routerConfig: AppRouter.router,
 
-                    // Localization
                     locale: locale,
                     localizationsDelegates: const [
                       AppLocalizations.delegate,
@@ -46,7 +46,6 @@ class MyApp extends StatelessWidget {
                     ],
                     supportedLocales: LocaleCubit.supportedLocales,
 
-                    // Theme
                     themeMode: themeMode,
                     theme: AppTheme.lightTheme.copyWith(
                       textTheme: GoogleFonts.poppinsTextTheme(

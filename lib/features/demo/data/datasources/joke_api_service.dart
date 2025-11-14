@@ -1,5 +1,5 @@
+import 'package:demoai/features/demo/data/models/joke_model.dart';
 import 'package:dio/dio.dart';
-import 'package:gist/features/demo/data/models/joke_model.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'joke_api_service.g.dart';

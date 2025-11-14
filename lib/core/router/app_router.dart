@@ -1,22 +1,33 @@
-import 'package:gist/features/demo/presentation/screens/demo_screen.dart';
-import 'package:gist/features/demo/presentation/screens/detail_screen.dart';
+import 'package:demoai/features/auth/presentation/screens/login_screen.dart';
+import 'package:demoai/features/auth/presentation/screens/welcome_screen.dart';
+import 'package:demoai/features/demo/presentation/screens/demo_screen.dart';
+import 'package:demoai/features/demo/presentation/screens/detail_screen.dart';
 import 'package:go_router/go_router.dart';
 
-/// Application routes configuration
 class AppRoutes {
-  static const String demo = '/';
+  static const String welcome = '/';
+  static const String login = '/login';
+  static const String home = '/home';
   static const String detail = '/detail';
 }
 
-/// GoRouter configuration for the application
-/// Defines all navigation routes and their corresponding screens
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.demo,
+    initialLocation: AppRoutes.welcome,
     routes: [
       GoRoute(
-        path: AppRoutes.demo,
-        name: 'demo',
+        path: AppRoutes.welcome,
+        name: 'welcome',
+        builder: (context, state) => const WelcomeScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.login,
+        name: 'login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.home,
+        name: 'home',
         builder: (context, state) => const DemoScreen(),
       ),
       GoRoute(

@@ -1,5 +1,5 @@
+import 'package:demoai/features/demo/domain/entities/joke.dart';
 import 'package:equatable/equatable.dart';
-import 'package:gist/features/demo/domain/entities/joke.dart';
 
 /// Base state class for JokeBloc
 abstract class JokeState extends Equatable {

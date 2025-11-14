@@ -1,13 +1,13 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
+import 'package:demoai/core/error/failures.dart';
+import 'package:demoai/features/demo/domain/entities/joke.dart';
+import 'package:demoai/features/demo/domain/usecases/get_jokes_by_type.dart';
+import 'package:demoai/features/demo/domain/usecases/get_random_joke.dart';
+import 'package:demoai/features/demo/presentation/bloc/joke_bloc.dart';
+import 'package:demoai/features/demo/presentation/bloc/joke_event.dart';
+import 'package:demoai/features/demo/presentation/bloc/joke_state.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gist/core/error/failures.dart';
-import 'package:gist/features/demo/domain/entities/joke.dart';
-import 'package:gist/features/demo/domain/usecases/get_jokes_by_type.dart';
-import 'package:gist/features/demo/domain/usecases/get_random_joke.dart';
-import 'package:gist/features/demo/presentation/bloc/joke_bloc.dart';
-import 'package:gist/features/demo/presentation/bloc/joke_event.dart';
-import 'package:gist/features/demo/presentation/bloc/joke_state.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockGetRandomJoke extends Mock implements GetRandomJoke {}

@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:gist/core/error/failures.dart';
+import 'package:demoai/core/error/failures.dart';
 
 /// Type definition for functions that return Either with Failure or success type
 typedef ResultFuture<T> = Future<Either<Failure, T>>;

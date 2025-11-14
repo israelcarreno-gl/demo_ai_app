@@ -1,12 +1,11 @@
+import 'package:demoai/core/error/exceptions.dart';
+import 'package:demoai/features/demo/data/datasources/joke_api_service.dart';
+import 'package:demoai/features/demo/data/datasources/joke_remote_data_source.dart';
+import 'package:demoai/features/demo/data/models/joke_model.dart';
 import 'package:dio/dio.dart';
-import 'package:gist/core/error/exceptions.dart';
-import 'package:gist/features/demo/data/datasources/joke_api_service.dart';
-import 'package:gist/features/demo/data/datasources/joke_remote_data_source.dart';
-import 'package:gist/features/demo/data/models/joke_model.dart';
 
 /// Implementation of remote data source using Retrofit API service
 class JokeRemoteDataSourceImpl implements JokeRemoteDataSource {
-
   JokeRemoteDataSourceImpl(this._apiService);
   final JokeApiService _apiService;
 
@@ -21,9 +20,7 @@ class JokeRemoteDataSourceImpl implements JokeRemoteDataSource {
         statusCode: e.response?.statusCode,
       );
     } catch (e) {
-      throw ServerException(
-        message: e.toString(),
-      );
+      throw ServerException(message: e.toString());
     }
   }
 
@@ -38,9 +35,7 @@ class JokeRemoteDataSourceImpl implements JokeRemoteDataSource {
         statusCode: e.response?.statusCode,
       );
     } catch (e) {
-      throw ServerException(
-        message: e.toString(),
-      );
+      throw ServerException(message: e.toString());
     }
   }
 }

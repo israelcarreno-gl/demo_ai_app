@@ -1,9 +1,9 @@
+import 'package:demoai/app.dart';
+import 'package:demoai/core/config/environment_manager.dart';
+import 'package:demoai/core/di/injection_container.dart';
+import 'package:demoai/core/observers/app_bloc_observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gist/app.dart';
-import 'package:gist/core/config/environment_manager.dart';
-import 'package:gist/core/di/injection_container.dart';
-import 'package:gist/core/observers/app_bloc_observer.dart';
 
 /// Development entry point
 /// Initializes app with DEV environment

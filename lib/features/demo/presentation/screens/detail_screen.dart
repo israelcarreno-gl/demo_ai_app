@@ -1,6 +1,6 @@
+import 'package:demoai/core/l10n/app_localizations.dart';
+import 'package:demoai/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
-import 'package:gist/core/l10n/app_localizations.dart';
-import 'package:gist/gen/assets.gen.dart';
 import 'package:go_router/go_router.dart';
 
 /// Detail screen to show joke details
