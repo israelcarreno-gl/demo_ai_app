@@ -50,12 +50,12 @@ class AppRouter {
           state.matchedLocation == AppRoutes.welcome ||
           state.matchedLocation == AppRoutes.login;
 
-      // Si está autenticado y va a pantallas de auth, redirigir a home
+      // If authenticated and going to auth screens, redirect to home
       if (isAuthenticated && isGoingToAuth) {
         return AppRoutes.home;
       }
 
-      // Si no está autenticado y no va a pantallas de auth, redirigir a welcome
+      // If not authenticated and not going to auth screens, redirect to welcome
       if (!isAuthenticated && !isAuthLoading && !isGoingToAuth) {
         return AppRoutes.welcome;
       }
