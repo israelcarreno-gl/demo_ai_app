@@ -16,7 +16,6 @@ class WelcomeScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             children: [
-              const SizedBox(height: 60),
               Text(
                 'Welcome Screen',
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -24,7 +23,7 @@ class WelcomeScreen extends StatelessWidget {
                   letterSpacing: 1.2,
                 ),
               ),
-              const SizedBox(height: 80),
+
               Container(
                 width: size.width * 0.6,
                 height: size.width * 0.6,

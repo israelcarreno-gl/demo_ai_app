@@ -21,42 +21,50 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider.value(value: getIt<ThemeCubit>()),
         BlocProvider.value(value: getIt<LocaleCubit>()),
-        BlocProvider(create: (_) => getIt<AuthBloc>()),
+        BlocProvider(
+          create: (_) => getIt<AuthBloc>()..add(AuthCheckRequested()),
+        ),
       ],
-      child: BlocBuilder<LocaleCubit, Locale>(
-        builder: (context, locale) {
-          return BlocBuilder<ThemeCubit, ThemeMode>(
-            builder: (context, themeMode) {
-              return ListenableBuilder(
-                listenable: getIt<EnvironmentManager>(),
-                builder: (context, _) {
-                  final config = getIt<AppConfig>();
+      child: Builder(
+        builder: (context) {
+          final authBloc = context.read<AuthBloc>();
 
-                  return MaterialApp.router(
-                    title: config.appName,
-                    debugShowCheckedModeBanner: false,
-                    routerConfig: AppRouter.router,
+          return BlocBuilder<LocaleCubit, Locale>(
+            builder: (context, locale) {
+              return BlocBuilder<ThemeCubit, ThemeMode>(
+                builder: (context, themeMode) {
+                  return ListenableBuilder(
+                    listenable: getIt<EnvironmentManager>(),
+                    builder: (context, _) {
+                      final config = getIt<AppConfig>();
 
-                    locale: locale,
-                    localizationsDelegates: const [
-                      AppLocalizations.delegate,
-                      GlobalMaterialLocalizations.delegate,
-                      GlobalWidgetsLocalizations.delegate,
-                      GlobalCupertinoLocalizations.delegate,
-                    ],
-                    supportedLocales: LocaleCubit.supportedLocales,
+                      return MaterialApp.router(
+                        title: config.appName,
+                        debugShowCheckedModeBanner: false,
+                        routerConfig: AppRouter.router(authBloc),
 
-                    themeMode: themeMode,
-                    theme: AppTheme.lightTheme.copyWith(
-                      textTheme: GoogleFonts.poppinsTextTheme(
-                        Theme.of(context).textTheme,
-                      ),
-                    ),
-                    darkTheme: AppTheme.darkTheme.copyWith(
-                      textTheme: GoogleFonts.poppinsTextTheme(
-                        Theme.of(context).textTheme,
-                      ),
-                    ),
+                        locale: locale,
+                        localizationsDelegates: const [
+                          AppLocalizations.delegate,
+                          GlobalMaterialLocalizations.delegate,
+                          GlobalWidgetsLocalizations.delegate,
+                          GlobalCupertinoLocalizations.delegate,
+                        ],
+                        supportedLocales: LocaleCubit.supportedLocales,
+
+                        themeMode: themeMode,
+                        theme: AppTheme.lightTheme.copyWith(
+                          textTheme: GoogleFonts.poppinsTextTheme(
+                            Theme.of(context).textTheme,
+                          ),
+                        ),
+                        darkTheme: AppTheme.darkTheme.copyWith(
+                          textTheme: GoogleFonts.poppinsTextTheme(
+                            Theme.of(context).textTheme,
+                          ),
+                        ),
+                      );
+                    },
                   );
                 },
               );
