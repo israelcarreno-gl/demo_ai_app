@@ -55,7 +55,7 @@ class AppRouter {
         return AppRoutes.home;
       }
 
-      // Si no está autenticado y no va a pantallas de auth, redirigir a welcome
+      // If not authenticated and not going to auth screens, redirect to welcome
       if (!isAuthenticated && !isAuthLoading && !isGoingToAuth) {
         return AppRoutes.welcome;
       }
