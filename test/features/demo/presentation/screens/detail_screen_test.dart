@@ -1,7 +1,7 @@
+import 'package:demoai/core/l10n/app_localizations.dart';
+import 'package:demoai/features/demo/presentation/screens/detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gist/core/l10n/app_localizations.dart';
-import 'package:gist/features/demo/presentation/screens/detail_screen.dart';
 
 void main() {
   Widget makeTestableWidget({String? joke}) {

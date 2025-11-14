@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
-import 'package:gist/core/error/exceptions.dart';
-import 'package:gist/core/error/failures.dart';
-import 'package:gist/core/utils/typedef.dart';
-import 'package:gist/features/demo/data/datasources/joke_remote_data_source.dart';
-import 'package:gist/features/demo/domain/entities/joke.dart';
-import 'package:gist/features/demo/domain/repositories/joke_repository.dart';
+import 'package:demoai/core/error/exceptions.dart';
+import 'package:demoai/core/error/failures.dart';
+import 'package:demoai/core/utils/typedef.dart';
+import 'package:demoai/features/demo/data/datasources/joke_remote_data_source.dart';
+import 'package:demoai/features/demo/domain/entities/joke.dart';
+import 'package:demoai/features/demo/domain/repositories/joke_repository.dart';
 
 /// Implementation of JokeRepository
 /// Handles data operations and error handling

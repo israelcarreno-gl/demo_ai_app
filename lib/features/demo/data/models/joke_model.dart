@@ -1,5 +1,5 @@
+import 'package:demoai/features/demo/domain/entities/joke.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:gist/features/demo/domain/entities/joke.dart';
 
 part 'joke_model.freezed.dart';
 part 'joke_model.g.dart';

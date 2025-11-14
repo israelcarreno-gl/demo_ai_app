@@ -1,16 +1,16 @@
+import 'package:demoai/core/config/app_config.dart';
+import 'package:demoai/core/config/environment_manager.dart';
+import 'package:demoai/core/di/injection_container.dart';
+import 'package:demoai/core/l10n/app_localizations.dart';
+import 'package:demoai/core/l10n/locale_cubit.dart';
+import 'package:demoai/core/router/app_router.dart';
+import 'package:demoai/core/theme/theme_cubit.dart';
+import 'package:demoai/features/demo/presentation/bloc/joke_bloc.dart';
+import 'package:demoai/features/demo/presentation/bloc/joke_event.dart';
+import 'package:demoai/features/demo/presentation/bloc/joke_state.dart';
+import 'package:demoai/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gist/core/config/app_config.dart';
-import 'package:gist/core/config/environment_manager.dart';
-import 'package:gist/core/di/injection_container.dart';
-import 'package:gist/core/l10n/app_localizations.dart';
-import 'package:gist/core/l10n/locale_cubit.dart';
-import 'package:gist/core/router/app_router.dart';
-import 'package:gist/core/theme/theme_cubit.dart';
-import 'package:gist/features/demo/presentation/bloc/joke_bloc.dart';
-import 'package:gist/features/demo/presentation/bloc/joke_event.dart';
-import 'package:gist/features/demo/presentation/bloc/joke_state.dart';
-import 'package:gist/gen/assets.gen.dart';
 import 'package:go_router/go_router.dart';
 
 /// Demo screen to showcase joke fetching and theme switching

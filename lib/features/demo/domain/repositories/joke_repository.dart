@@ -1,5 +1,5 @@
-import 'package:gist/core/utils/typedef.dart';
-import 'package:gist/features/demo/domain/entities/joke.dart';
+import 'package:demoai/core/utils/typedef.dart';
+import 'package:demoai/features/demo/domain/entities/joke.dart';
 
 /// Repository interface for jokes
 /// Defines the contract for data operations (domain layer)

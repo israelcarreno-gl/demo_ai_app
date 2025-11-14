@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
+import 'package:demoai/features/demo/data/datasources/joke_remote_data_source.dart';
+import 'package:demoai/features/demo/data/models/joke_model.dart';
+import 'package:demoai/features/demo/data/repositories/joke_repository_impl.dart';
+import 'package:demoai/features/demo/domain/entities/joke.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gist/features/demo/data/datasources/joke_remote_data_source.dart';
-import 'package:gist/features/demo/data/models/joke_model.dart';
-import 'package:gist/features/demo/data/repositories/joke_repository_impl.dart';
-import 'package:gist/features/demo/domain/entities/joke.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockJokeRemoteDataSource extends Mock implements JokeRemoteDataSource {}

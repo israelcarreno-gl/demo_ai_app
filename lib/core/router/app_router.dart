@@ -1,19 +1,83 @@
-import 'package:gist/features/demo/presentation/screens/demo_screen.dart';
-import 'package:gist/features/demo/presentation/screens/detail_screen.dart';
+import 'dart:async';
+import 'dart:io';
+
+import 'package:demoai/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:demoai/features/auth/presentation/screens/login_screen.dart';
+import 'package:demoai/features/auth/presentation/screens/welcome_screen.dart';
+import 'package:demoai/features/dashboard/presentation/screens/dashboard_screen.dart';
+import 'package:demoai/features/demo/presentation/screens/demo_screen.dart';
+import 'package:demoai/features/demo/presentation/screens/detail_screen.dart';
+import 'package:demoai/features/questionnaire/presentation/screens/document_upload_screen.dart';
+import 'package:demoai/features/questionnaire/presentation/screens/questionnaire_options_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Application routes configuration
 class AppRoutes {
-  static const String demo = '/';
+  static const String welcome = '/';
+  static const String login = '/login';
+  static const String home = '/home';
+  static const String demo = '/demo';
   static const String detail = '/detail';
+  static const String documentUpload = '/document-upload';
+  static const String questionnaireOptions = '/questionnaire-options';
 }
 
-/// GoRouter configuration for the application
-/// Defines all navigation routes and their corresponding screens
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners();
+    _subscription = stream.asBroadcastStream().listen((_) => notifyListeners());
+  }
+
+  late final StreamSubscription<dynamic> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+}
+
 class AppRouter {
-  static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.demo,
+  static GoRouter router(AuthBloc authBloc) => GoRouter(
+    initialLocation: AppRoutes.welcome,
+    refreshListenable: GoRouterRefreshStream(authBloc.stream),
+    redirect: (BuildContext context, GoRouterState state) {
+      final authState = authBloc.state;
+      final isAuthenticated = authState is Authenticated;
+      final isAuthLoading = authState is AuthLoading;
+
+      final isGoingToAuth =
+          state.matchedLocation == AppRoutes.welcome ||
+          state.matchedLocation == AppRoutes.login;
+
+      // If authenticated and going to auth screens, redirect to home
+      if (isAuthenticated && isGoingToAuth) {
+        return AppRoutes.home;
+      }
+
+      // If not authenticated and not going to auth screens, redirect to welcome
+      if (!isAuthenticated && !isAuthLoading && !isGoingToAuth) {
+        return AppRoutes.welcome;
+      }
+
+      return null; // No redirigir
+    },
     routes: [
+      GoRoute(
+        path: AppRoutes.welcome,
+        name: 'welcome',
+        builder: (context, state) => const WelcomeScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.login,
+        name: 'login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.home,
+        name: 'home',
+        builder: (context, state) => const DashboardScreen(),
+      ),
       GoRoute(
         path: AppRoutes.demo,
         name: 'demo',
@@ -25,6 +89,24 @@ class AppRouter {
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>?;
           return DetailScreen(joke: extra?['joke'] as String?);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.documentUpload,
+        name: 'documentUpload',
+        builder: (context, state) => const DocumentUploadScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.questionnaireOptions,
+        name: 'questionnaireOptions',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return QuestionnaireOptionsScreen(
+            documentFile: extra?['file'] as File,
+            fileName: extra?['fileName'] as String,
+            fileSize: extra?['fileSize'] as int,
+            fileType: extra?['fileType'] as String,
+          );
         },
       ),
     ],

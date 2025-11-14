@@ -1,18 +1,18 @@
+import 'package:demoai/core/config/app_config.dart';
+import 'package:demoai/core/config/environment.dart';
+import 'package:demoai/core/config/environment_manager.dart' hide Environment;
+import 'package:demoai/core/di/injection_container.dart';
+import 'package:demoai/core/l10n/app_localizations.dart';
+import 'package:demoai/core/l10n/locale_cubit.dart';
+import 'package:demoai/core/theme/theme_cubit.dart';
+import 'package:demoai/features/demo/domain/entities/joke.dart';
+import 'package:demoai/features/demo/presentation/bloc/joke_bloc.dart';
+import 'package:demoai/features/demo/presentation/bloc/joke_event.dart';
+import 'package:demoai/features/demo/presentation/bloc/joke_state.dart';
+import 'package:demoai/features/demo/presentation/screens/demo_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gist/core/config/app_config.dart';
-import 'package:gist/core/config/environment.dart';
-import 'package:gist/core/config/environment_manager.dart' hide Environment;
-import 'package:gist/core/di/injection_container.dart';
-import 'package:gist/core/l10n/app_localizations.dart';
-import 'package:gist/core/l10n/locale_cubit.dart';
-import 'package:gist/core/theme/theme_cubit.dart';
-import 'package:gist/features/demo/domain/entities/joke.dart';
-import 'package:gist/features/demo/presentation/bloc/joke_bloc.dart';
-import 'package:gist/features/demo/presentation/bloc/joke_event.dart';
-import 'package:gist/features/demo/presentation/bloc/joke_state.dart';
-import 'package:gist/features/demo/presentation/screens/demo_screen.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -63,6 +63,8 @@ void main() {
     getIt.registerSingleton<EnvironmentManager>(EnvironmentManager(prefs));
     getIt.registerSingleton<AppConfig>(
       const AppConfig(
+        supabaseAnonKey: 'fake-anon',
+        supabaseUrl: 'https://fake.supabase.co',
         environment: Environment.dev,
         apiBaseUrl: 'https://test.api.com',
         appName: 'Test App',

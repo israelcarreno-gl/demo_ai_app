@@ -1,6 +1,6 @@
-import 'package:gist/core/utils/typedef.dart';
-import 'package:gist/features/demo/domain/entities/joke.dart';
-import 'package:gist/features/demo/domain/repositories/joke_repository.dart';
+import 'package:demoai/core/utils/typedef.dart';
+import 'package:demoai/features/demo/domain/entities/joke.dart';
+import 'package:demoai/features/demo/domain/repositories/joke_repository.dart';
 
 /// Use case to get a random joke
 /// Implements the use case pattern from clean architecture

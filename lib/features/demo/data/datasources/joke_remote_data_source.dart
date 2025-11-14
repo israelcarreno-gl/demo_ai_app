@@ -1,4 +1,4 @@
-import 'package:gist/features/demo/data/models/joke_model.dart';
+import 'package:demoai/features/demo/data/models/joke_model.dart';
 
 /// Remote data source interface for jokes
 abstract class JokeRemoteDataSource {

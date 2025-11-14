@@ -1,4 +1,4 @@
-import 'package:gist/core/config/environment.dart';
+import 'package:demoai/core/config/environment.dart';
 
 /// Application configuration class
 /// Contains all app-wide configuration settings based on environment
@@ -10,6 +10,8 @@ class AppConfig {
     required this.appName,
     required this.enableLogger,
     required this.apiTimeout,
+    required this.supabaseUrl,
+    required this.supabaseAnonKey,
   });
 
   /// Load configuration from environment map
@@ -26,6 +28,8 @@ class AppConfig {
       apiTimeout: Duration(
         seconds: int.tryParse(env['API_TIMEOUT'] ?? '30') ?? 30,
       ),
+      supabaseUrl: env['SUPABASE_URL'] ?? '',
+      supabaseAnonKey: env['SUPABASE_ANON_KEY'] ?? '',
     );
   }
 
@@ -37,6 +41,8 @@ class AppConfig {
       appName: 'Gist DEV',
       enableLogger: true,
       apiTimeout: Duration(seconds: 30),
+      supabaseUrl: '',
+      supabaseAnonKey: '',
     );
   }
 
@@ -48,6 +54,8 @@ class AppConfig {
       appName: 'Gist INT',
       enableLogger: true,
       apiTimeout: Duration(seconds: 30),
+      supabaseUrl: '',
+      supabaseAnonKey: '',
     );
   }
 
@@ -59,6 +67,8 @@ class AppConfig {
       appName: 'Gist',
       enableLogger: false,
       apiTimeout: Duration(seconds: 20),
+      supabaseUrl: '',
+      supabaseAnonKey: '',
     );
   }
 
@@ -67,6 +77,8 @@ class AppConfig {
   final String appName;
   final bool enableLogger;
   final Duration apiTimeout;
+  final String supabaseUrl;
+  final String supabaseAnonKey;
 
   /// Convert string to Environment enum
   static Environment _environmentFromString(String value) {
@@ -91,6 +103,8 @@ class AppConfig {
     String? appName,
     bool? enableLogger,
     Duration? apiTimeout,
+    String? supabaseUrl,
+    String? supabaseAnonKey,
   }) {
     return AppConfig(
       environment: environment ?? this.environment,
@@ -98,6 +112,8 @@ class AppConfig {
       appName: appName ?? this.appName,
       enableLogger: enableLogger ?? this.enableLogger,
       apiTimeout: apiTimeout ?? this.apiTimeout,
+      supabaseUrl: supabaseUrl ?? this.supabaseUrl,
+      supabaseAnonKey: supabaseAnonKey ?? this.supabaseAnonKey,
     );
   }
 }

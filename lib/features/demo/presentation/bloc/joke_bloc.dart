@@ -1,12 +1,11 @@
+import 'package:demoai/features/demo/domain/usecases/get_jokes_by_type.dart';
+import 'package:demoai/features/demo/domain/usecases/get_random_joke.dart';
+import 'package:demoai/features/demo/presentation/bloc/joke_event.dart';
+import 'package:demoai/features/demo/presentation/bloc/joke_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gist/features/demo/domain/usecases/get_jokes_by_type.dart';
-import 'package:gist/features/demo/domain/usecases/get_random_joke.dart';
-import 'package:gist/features/demo/presentation/bloc/joke_event.dart';
-import 'package:gist/features/demo/presentation/bloc/joke_state.dart';
 
 /// BLoC for managing joke-related state and events
 class JokeBloc extends Bloc<JokeEvent, JokeState> {
-
   JokeBloc({
     required GetRandomJoke getRandomJoke,
     required GetJokesByType getJokesByType,
