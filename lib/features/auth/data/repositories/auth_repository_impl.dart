@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:demoai/core/error/failures.dart';
 import 'package:demoai/core/services/supabase_service.dart';
@@ -24,9 +26,7 @@ class AuthRepositoryImpl implements AuthRepository {
         'updated_at': DateTime.now().toIso8601String(),
       }, onConflict: 'id');
     } catch (e) {
-      // Log but don't fail the auth operation
-      // ignore: avoid_print
-      print('Failed to sync user to database: $e');
+      log('Failed to sync user to database: $e');
     }
   }
 
