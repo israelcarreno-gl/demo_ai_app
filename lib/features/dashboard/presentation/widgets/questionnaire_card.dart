@@ -68,7 +68,7 @@ class QuestionnaireCard extends StatelessWidget {
                       const SizedBox(height: 6),
                       if (questionnaire.estimatedTime != null)
                         Text(
-                          'Estimated: ${_formatSeconds(questionnaire.estimatedTime!)}',
+                          'Estimated: ${_formatMinutes(questionnaire.estimatedTime!)}',
                           style: const TextStyle(color: Colors.white70),
                         ),
                       if (questionnaire.summary != null) ...[
@@ -84,19 +84,26 @@ class QuestionnaireCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: statusColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    '${status[0].toUpperCase()}${status.substring(1)}',
-                    style: TextStyle(color: statusColor),
-                  ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: statusColor.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '${status[0].toUpperCase()}${status.substring(1)}',
+                        style: TextStyle(color: statusColor),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    _AccuracyBadge(accuracy: questionnaire.accuracy),
+                  ],
                 ),
               ],
             ),
@@ -128,9 +135,49 @@ class QuestionnaireCard extends StatelessWidget {
     );
   }
 
-  String _formatSeconds(int seconds) {
-    if (seconds <= 0) return '0m';
-    final minutes = seconds ~/ 60;
-    return '${minutes}m ${seconds % 60}s';
+  String _formatMinutes(int minutes) {
+    if (minutes <= 0) return '0m';
+    if (minutes < 60) return '${minutes}m';
+    final hours = minutes ~/ 60;
+    final mins = minutes % 60;
+    if (mins == 0) return '${hours}h';
+    return '${hours}h ${mins}m';
+  }
+}
+
+class _AccuracyBadge extends StatelessWidget {
+  const _AccuracyBadge({this.accuracy});
+  final double? accuracy;
+
+  Color _badgeColor(double? pct) {
+    if (pct == null) return const Color(0xFF64748B); // grey
+    if (pct >= 90) return const Color(0xFF16A34A); // green
+    if (pct >= 75) return const Color(0xFFB45309); // amber/brown
+    if (pct >= 50) return const Color(0xFFF59E0B); // orange-ish for 50-75
+    return const Color(0xFFEF4444); // red
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final pct = accuracy?.round();
+    final color = _badgeColor(pct?.toDouble());
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.emoji_events, size: 14, color: color),
+          const SizedBox(width: 8),
+          Text(
+            pct != null ? '$pct%' : '-',
+            style: TextStyle(color: color, fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
+    );
   }
 }

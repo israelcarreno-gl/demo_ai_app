@@ -25,6 +25,7 @@ mixin _$QuestionnaireModel {
   String? get description => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
   String? get documentName => throw _privateConstructorUsedError;
+  String? get documentPath => throw _privateConstructorUsedError;
   int? get documentSize => throw _privateConstructorUsedError;
   String? get documentType => throw _privateConstructorUsedError;
   List<QuestionModel>? get questions => throw _privateConstructorUsedError;
@@ -56,6 +57,7 @@ abstract class $QuestionnaireModelCopyWith<$Res> {
     String? description,
     String status,
     String? documentName,
+    String? documentPath,
     int? documentSize,
     String? documentType,
     List<QuestionModel>? questions,
@@ -89,6 +91,7 @@ class _$QuestionnaireModelCopyWithImpl<$Res, $Val extends QuestionnaireModel>
     Object? description = freezed,
     Object? status = null,
     Object? documentName = freezed,
+    Object? documentPath = freezed,
     Object? documentSize = freezed,
     Object? documentType = freezed,
     Object? questions = freezed,
@@ -130,6 +133,10 @@ class _$QuestionnaireModelCopyWithImpl<$Res, $Val extends QuestionnaireModel>
             documentName: freezed == documentName
                 ? _value.documentName
                 : documentName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            documentPath: freezed == documentPath
+                ? _value.documentPath
+                : documentPath // ignore: cast_nullable_to_non_nullable
                       as String?,
             documentSize: freezed == documentSize
                 ? _value.documentSize
@@ -183,6 +190,7 @@ abstract class _$$QuestionnaireModelImplCopyWith<$Res>
     String? description,
     String status,
     String? documentName,
+    String? documentPath,
     int? documentSize,
     String? documentType,
     List<QuestionModel>? questions,
@@ -215,6 +223,7 @@ class __$$QuestionnaireModelImplCopyWithImpl<$Res>
     Object? description = freezed,
     Object? status = null,
     Object? documentName = freezed,
+    Object? documentPath = freezed,
     Object? documentSize = freezed,
     Object? documentType = freezed,
     Object? questions = freezed,
@@ -256,6 +265,10 @@ class __$$QuestionnaireModelImplCopyWithImpl<$Res>
         documentName: freezed == documentName
             ? _value.documentName
             : documentName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        documentPath: freezed == documentPath
+            ? _value.documentPath
+            : documentPath // ignore: cast_nullable_to_non_nullable
                   as String?,
         documentSize: freezed == documentSize
             ? _value.documentSize
@@ -302,6 +315,7 @@ class _$QuestionnaireModelImpl extends _QuestionnaireModel {
     this.description,
     this.status = 'draft',
     this.documentName,
+    this.documentPath,
     this.documentSize,
     this.documentType,
     final List<QuestionModel>? questions,
@@ -330,6 +344,8 @@ class _$QuestionnaireModelImpl extends _QuestionnaireModel {
   @override
   final String? documentName;
   @override
+  final String? documentPath;
+  @override
   final int? documentSize;
   @override
   final String? documentType;
@@ -354,7 +370,7 @@ class _$QuestionnaireModelImpl extends _QuestionnaireModel {
 
   @override
   String toString() {
-    return 'QuestionnaireModel(id: $id, userId: $userId, title: $title, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, status: $status, documentName: $documentName, documentSize: $documentSize, documentType: $documentType, questions: $questions, accuracy: $accuracy, completionTime: $completionTime, estimatedTime: $estimatedTime, summary: $summary)';
+    return 'QuestionnaireModel(id: $id, userId: $userId, title: $title, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, status: $status, documentName: $documentName, documentPath: $documentPath, documentSize: $documentSize, documentType: $documentType, questions: $questions, accuracy: $accuracy, completionTime: $completionTime, estimatedTime: $estimatedTime, summary: $summary)';
   }
 
   @override
@@ -374,6 +390,8 @@ class _$QuestionnaireModelImpl extends _QuestionnaireModel {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.documentName, documentName) ||
                 other.documentName == documentName) &&
+            (identical(other.documentPath, documentPath) ||
+                other.documentPath == documentPath) &&
             (identical(other.documentSize, documentSize) ||
                 other.documentSize == documentSize) &&
             (identical(other.documentType, documentType) ||
@@ -402,6 +420,7 @@ class _$QuestionnaireModelImpl extends _QuestionnaireModel {
     description,
     status,
     documentName,
+    documentPath,
     documentSize,
     documentType,
     const DeepCollectionEquality().hash(_questions),
@@ -433,6 +452,7 @@ abstract class _QuestionnaireModel extends QuestionnaireModel {
     final String? description,
     final String status,
     final String? documentName,
+    final String? documentPath,
     final int? documentSize,
     final String? documentType,
     final List<QuestionModel>? questions,
@@ -459,6 +479,8 @@ abstract class _QuestionnaireModel extends QuestionnaireModel {
   String get status;
   @override
   String? get documentName;
+  @override
+  String? get documentPath;
   @override
   int? get documentSize;
   @override

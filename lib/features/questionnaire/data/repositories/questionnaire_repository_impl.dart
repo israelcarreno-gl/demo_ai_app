@@ -80,28 +80,14 @@ class QuestionnaireRepositoryImpl implements QuestionnaireRepository {
     String userId,
   ) async {
     try {
-      // Prefer calling the Edge Function that returns questionnaires for the user.
-      final response = await _supabaseService.client.functions.invoke(
-        'get-questionnaires',
-        body: {'user_id': userId},
-      );
+      // Query the questionnaires table directly and include nested questions
+      final data = await _supabaseService.client
+          .from(_tableName)
+          .select('*, questions(*)')
+          .eq('user_id', userId)
+          .order('created_at', ascending: false);
 
-      if (response.data == null) {
-        return const Left(
-          ServerFailure(message: 'No data received from server'),
-        );
-      }
-
-      if (response.data is Map && response.data['error'] != null) {
-        final error = response.data['error'];
-        final errorMessage = error is Map && error['message'] != null
-            ? error['message'].toString()
-            : 'Unknown error occurred';
-        return Left(ServerFailure(message: errorMessage));
-      }
-
-      final data = response.data as Map<String, dynamic>;
-      final questionnairesList = data['questionnaires'] as List<dynamic>? ?? [];
+      final questionnairesList = data as List<dynamic>;
       final questionnaires = questionnairesList
           .map(
             (json) => QuestionnaireModel.fromJson(json as Map<String, dynamic>),
@@ -121,12 +107,13 @@ class QuestionnaireRepositoryImpl implements QuestionnaireRepository {
     try {
       final data = await _supabaseService.client
           .from(_tableName)
-          .select()
+          .select('*, questions(*)')
           .eq('id', id)
           .single();
 
       return Right(QuestionnaireModel.fromJson(data));
     } catch (e) {
+      log('Failed to fetch questionnaire by id=$id: $e');
       return Left(ServerFailure(message: e.toString()));
     }
   }
@@ -144,6 +131,7 @@ class QuestionnaireRepositoryImpl implements QuestionnaireRepository {
 
       return Right(QuestionnaireModel.fromJson(data));
     } catch (e) {
+      log('Failed updating questionnaire id=${questionnaire.id}: $e');
       return Left(ServerFailure(message: e.toString()));
     }
   }
@@ -153,12 +141,39 @@ class QuestionnaireRepositoryImpl implements QuestionnaireRepository {
     QuestionnaireModel questionnaire,
   ) async {
     try {
+      final payload = Map<String, dynamic>.from(questionnaire.toJson());
+      // Remove nested questions from payload when updating questionnaire top-level fields
+      payload.remove('questions');
+      log('Updating questionnaire id=${questionnaire.id} with: $payload');
       final data = await _supabaseService.client
           .from(_tableName)
-          .update(questionnaire.toJson())
+          .update(payload)
           .eq('id', questionnaire.id)
           .select()
           .single();
+
+      // just to make sure the updqate was successful
+      if (data['accuracy'] != questionnaire.accuracy ||
+          data['completion_time'] != questionnaire.completionTime) {
+        final analyticsPayload = <String, dynamic>{
+          'accuracy': questionnaire.accuracy,
+          'completion_time': questionnaire.completionTime,
+          'summary': questionnaire.summary,
+          'updated_at': questionnaire.updatedAt?.toIso8601String(),
+        };
+        log(
+          'Re-updating analytics fields for questionnaire id=${questionnaire.id} with: $analyticsPayload',
+        );
+        final data2 = await _supabaseService.client
+            .from(_tableName)
+            .update(analyticsPayload)
+            .eq('id', questionnaire.id)
+            .select()
+            .single();
+        log('Re-update response: $data2');
+        return Right(QuestionnaireModel.fromJson(data2));
+      }
+      log('Update response for questionnaire id=${questionnaire.id}: $data');
 
       return Right(QuestionnaireModel.fromJson(data));
     } catch (e) {

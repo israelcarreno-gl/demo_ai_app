@@ -44,7 +44,7 @@ class _QuestionnaireResponseScreenState
   }
 
   String _formatDuration(int elapsedSeconds) {
-    final minutes = (elapsedSeconds ~/ 60);
+    final minutes = elapsedSeconds ~/ 60;
     final seconds = elapsedSeconds % 60;
     if (minutes > 0) return '${minutes}m ${seconds}s';
     return '${seconds}s';
@@ -224,8 +224,7 @@ class _QuestionnaireResponseScreenState
                     child: Text(
                       label,
                       softWrap: true,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
+                      // Allow the label to expand vertically to show full content
                       style: TextStyle(
                         color: isSelected ? Colors.white : Colors.white70,
                       ),
@@ -278,8 +277,6 @@ class _QuestionnaireResponseScreenState
           title: Text(
             label,
             softWrap: true,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
             style: TextStyle(color: isSelected ? Colors.white : Colors.white70),
           ),
         );

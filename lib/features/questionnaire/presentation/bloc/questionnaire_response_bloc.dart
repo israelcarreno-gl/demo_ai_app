@@ -1,12 +1,16 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:demoai/core/di/injection_container.dart';
 // Data models are used via events - no direct import required here
 import 'package:demoai/features/questionnaire/data/models/question_model.dart';
+import 'package:demoai/features/questionnaire/data/models/questionnaire_model.dart';
 import 'package:demoai/features/questionnaire/domain/entities/question_response.dart';
 import 'package:demoai/features/questionnaire/domain/usecases/save_answer.dart';
 import 'package:demoai/features/questionnaire/domain/usecases/submit_responses.dart';
 import 'package:demoai/features/questionnaire/domain/usecases/update_questionnaire.dart';
+import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_bloc.dart';
 import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_response_event.dart';
 import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_response_state.dart';
 
@@ -209,9 +213,10 @@ class QuestionnaireResponseBloc
       // Compute timing and accuracy
       final startedAt = stateCur.startedAt;
       final completionTime = DateTime.now().difference(startedAt).inSeconds;
-      final totalAnswered = localResponses.length + argumentResponses.length;
-      final accuracy = totalAnswered > 0
-          ? (correctCount / totalAnswered) * 100.0
+      final totalLocalAnswered = localResponses.length;
+      // Accuracy is computed only for non-argument (auto-gradable) questions
+      final accuracy = totalLocalAnswered > 0
+          ? (correctCount / totalLocalAnswered) * 100.0
           : 0.0;
 
       // Persist the computed metrics to the questionnaire
@@ -221,8 +226,27 @@ class QuestionnaireResponseBloc
         updatedAt: DateTime.now(),
       );
 
-      // Try to update questionnaire; ignore failure for now but log
-      await updateQuestionnaire.call(updatedQuestionnaire);
+      // Try to update questionnaire and prefer the server response if successful
+      final updateResult = await updateQuestionnaire.call(updatedQuestionnaire);
+      QuestionnaireModel questionnaireFromServer = updatedQuestionnaire;
+      updateResult.fold(
+        (failure) {
+          // ignore failure but keep local copy; log for debugging
+          // Note: Consider emitting an error state in the future if updates fail
+          log('Failed to update questionnaire: ${failure.message}');
+        },
+        (q) {
+          questionnaireFromServer = q;
+          log('Questionnaire updated successfully on server: ${q.toJson()}');
+          try {
+            getIt<QuestionnaireBloc>().add(
+              GetUserQuestionnairesRequested(questionnaireFromServer.userId),
+            );
+          } catch (_) {
+            // ignore if bloc not available
+          }
+        },
+      );
       if (argumentResponses.isNotEmpty) {
         final result = await submitResponses.call(
           questionnaireId: questionnaire.id,
@@ -234,7 +258,7 @@ class QuestionnaireResponseBloc
           (_) {
             emit(
               QuestionnaireResponseSubmitted(
-                questionnaire: updatedQuestionnaire,
+                questionnaire: questionnaireFromServer,
                 correctCount: correctCount,
                 totalLocal: localResponses.length,
                 perQuestionCorrect: perQuestionCorrect,
@@ -248,7 +272,7 @@ class QuestionnaireResponseBloc
         // No backend interaction required
         emit(
           QuestionnaireResponseSubmitted(
-            questionnaire: updatedQuestionnaire,
+            questionnaire: questionnaireFromServer,
             correctCount: correctCount,
             totalLocal: localResponses.length,
             perQuestionCorrect: perQuestionCorrect,

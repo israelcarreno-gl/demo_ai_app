@@ -14,6 +14,7 @@ class QuestionnaireModel with _$QuestionnaireModel {
     String? description,
     @Default('draft') String status,
     String? documentName,
+    String? documentPath,
     int? documentSize,
     String? documentType,
     List<QuestionModel>? questions,
@@ -37,6 +38,7 @@ class QuestionnaireModel with _$QuestionnaireModel {
       description: json['description'] as String?,
       status: json['status'] as String? ?? 'draft',
       documentName: json['document_name'] as String?,
+      documentPath: json['document_path'] as String?,
       documentSize: json['document_size'] as int?,
       documentType: json['document_type'] as String?,
       accuracy: (json['accuracy'] != null)
@@ -63,6 +65,7 @@ class QuestionnaireModel with _$QuestionnaireModel {
       'description': description,
       'status': status,
       'document_name': documentName,
+      'document_path': documentPath,
       'document_size': documentSize,
       'document_type': documentType,
       'accuracy': accuracy,

@@ -11,6 +11,7 @@ import 'package:demoai/features/demo/presentation/screens/detail_screen.dart';
 import 'package:demoai/features/questionnaire/data/models/questionnaire_model.dart';
 import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_bloc.dart';
 import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_response_bloc.dart';
+import 'package:demoai/features/questionnaire/presentation/screens/document_preview_screen.dart';
 import 'package:demoai/features/questionnaire/presentation/screens/document_upload_screen.dart';
 import 'package:demoai/features/questionnaire/presentation/screens/questionnaire_detail_screen.dart';
 import 'package:demoai/features/questionnaire/presentation/screens/questionnaire_options_screen.dart';
@@ -31,6 +32,7 @@ class AppRoutes {
   static const String questionnaireDetail = '/questionnaire-detail';
   static const String questionnaireResponse = '/questionnaire-response';
   static const String questionnaireResult = '/questionnaire-result';
+  static const String documentPreview = '/document-preview';
 }
 
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -155,6 +157,26 @@ class AppRouter {
             totalLocal: extra?['totalLocal'] as int? ?? 0,
             perQuestionCorrect:
                 extra?['perQuestionCorrect'] as Map<String, bool>? ?? {},
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.documentPreview,
+        name: 'documentPreview',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final documentPath = extra?['documentPath'] as String?;
+          final documentType = extra?['documentType'] as String?;
+          final documentName = extra?['documentName'] as String?;
+          if (documentPath == null) {
+            return const Scaffold(
+              body: Center(child: Text('No document specified')),
+            );
+          }
+          return DocumentPreviewScreen(
+            documentPath: documentPath,
+            documentType: documentType,
+            documentName: documentName,
           );
         },
       ),

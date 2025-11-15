@@ -53,8 +53,8 @@ class QuestionnaireResultScreen extends StatelessWidget {
                             value: percentage / 100,
                             strokeWidth: 14,
                             backgroundColor: Colors.white12,
-                            valueColor: AlwaysStoppedAnimation(
-                              const Color(0xFF7C9BFF),
+                            valueColor: const AlwaysStoppedAnimation(
+                              Color(0xFF7C9BFF),
                             ),
                           ),
                         ),
@@ -252,7 +252,7 @@ class QuestionnaireResultScreen extends StatelessWidget {
           CircleAvatar(
             backgroundColor: const Color(0xFF10151A),
             radius: 18,
-            child: Container(
+            child: DecoratedBox(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(color: const Color(0xFF2563EB)),
@@ -290,7 +290,7 @@ class QuestionnaireResultScreen extends StatelessWidget {
   // old stat helper removed -- using _buildMetricCard
 
   String _formatElapsed(int seconds) {
-    final minutes = (seconds ~/ 60);
+    final minutes = seconds ~/ 60;
     final secs = seconds % 60;
     if (minutes > 0) return '${minutes}m ${secs}s';
     return '${secs}s';
