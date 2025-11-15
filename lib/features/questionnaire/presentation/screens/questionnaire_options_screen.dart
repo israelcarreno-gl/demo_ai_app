@@ -70,8 +70,11 @@ class _QuestionnaireOptionsScreenState
     return BlocConsumer<QuestionnaireBloc, QuestionnaireState>(
       listener: (context, state) {
         if (state is QuestionnaireGenerated) {
-          // Navigate to questionnaire detail screen
-          context.pushNamed('questionnaireDetail', extra: state.questionnaire);
+          // Navigate to questionnaire response screen for answering
+          context.pushNamed(
+            'questionnaireResponse',
+            extra: state.questionnaire,
+          );
         } else if (state is QuestionnaireError) {
           // Show error snackbar
           ScaffoldMessenger.of(context).showSnackBar(
@@ -188,9 +191,9 @@ class _QuestionnaireOptionsScreenState
             ),
             // Loading overlay
             if (state is QuestionnaireLoading)
-              Container(
+              const ColoredBox(
                 color: Colors.black54,
-                child: const Center(
+                child: Center(
                   child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(
                       Color(0xFF6C63FF),

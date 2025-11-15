@@ -19,11 +19,16 @@ import 'package:demoai/features/demo/domain/usecases/get_jokes_by_type.dart';
 import 'package:demoai/features/demo/domain/usecases/get_random_joke.dart';
 import 'package:demoai/features/demo/presentation/bloc/joke_bloc.dart';
 import 'package:demoai/features/questionnaire/data/repositories/questionnaire_repository_impl.dart';
+import 'package:demoai/features/questionnaire/data/repositories/questionnaire_response_repository_impl.dart';
 import 'package:demoai/features/questionnaire/domain/repositories/questionnaire_repository.dart';
+import 'package:demoai/features/questionnaire/domain/repositories/questionnaire_response_repository.dart';
 import 'package:demoai/features/questionnaire/domain/usecases/generate_questionnaire.dart';
 import 'package:demoai/features/questionnaire/domain/usecases/get_questionnaire_by_id.dart';
+import 'package:demoai/features/questionnaire/domain/usecases/save_answer.dart';
+import 'package:demoai/features/questionnaire/domain/usecases/submit_responses.dart';
 import 'package:demoai/features/questionnaire/domain/usecases/upload_document.dart';
 import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_bloc.dart';
+import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_response_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
@@ -125,6 +130,27 @@ Future<void> initializeDependencies({Environment? initialEnvironment}) async {
       generateQuestionnaire: getIt<GenerateQuestionnaire>(),
       uploadDocument: getIt<UploadDocument>(),
       getQuestionnaireById: getIt<GetQuestionnaireById>(),
+    ),
+  );
+
+  // Questionnaire responses repository
+  getIt.registerLazySingleton<QuestionnaireResponseRepository>(
+    () => QuestionnaireResponseRepositoryImpl(getIt<SupabaseService>()),
+  );
+
+  // Use cases for responses
+  getIt.registerLazySingleton<SaveAnswer>(
+    () => SaveAnswer(getIt<QuestionnaireResponseRepository>()),
+  );
+  getIt.registerLazySingleton<SubmitResponses>(
+    () => SubmitResponses(getIt<QuestionnaireResponseRepository>()),
+  );
+
+  // Questionnaire response BLoC
+  getIt.registerFactory<QuestionnaireResponseBloc>(
+    () => QuestionnaireResponseBloc(
+      saveAnswer: getIt<SaveAnswer>(),
+      submitResponses: getIt<SubmitResponses>(),
     ),
   );
 

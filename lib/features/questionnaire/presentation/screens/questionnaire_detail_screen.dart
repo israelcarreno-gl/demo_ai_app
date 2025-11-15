@@ -5,9 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class QuestionnaireDetailScreen extends StatelessWidget {
+  const QuestionnaireDetailScreen({required this.questionnaire, super.key});
   final QuestionnaireModel questionnaire;
-
-  const QuestionnaireDetailScreen({super.key, required this.questionnaire});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +31,7 @@ class QuestionnaireDetailScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.share, color: Colors.white),
             onPressed: () {
-              // TODO: Implement share functionality
+              // TODO(Isra): Implement share functionality
             },
           ),
         ],
