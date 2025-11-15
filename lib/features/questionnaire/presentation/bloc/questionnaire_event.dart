@@ -24,3 +24,12 @@ class GetQuestionnaireRequested extends QuestionnaireEvent {
   @override
   List<Object?> get props => [id];
 }
+
+class GetUserQuestionnairesRequested extends QuestionnaireEvent {
+  const GetUserQuestionnairesRequested(this.userId);
+
+  final String userId;
+
+  @override
+  List<Object?> get props => [userId];
+}

@@ -20,16 +20,23 @@ class QuestionnaireResponseInProgress extends QuestionnaireResponseState {
     required this.questionnaire,
     required this.currentIndex,
     required this.responses,
+    required this.startedAt,
   });
   final QuestionnaireModel questionnaire;
   final int currentIndex;
   final Map<String, QuestionResponse> responses;
+  final DateTime startedAt;
 
   double get progress =>
       (currentIndex + 1) / (questionnaire.questions?.length ?? 1);
 
   @override
-  List<Object?> get props => [questionnaire, currentIndex, responses];
+  List<Object?> get props => [
+    questionnaire,
+    currentIndex,
+    responses,
+    startedAt,
+  ];
 }
 
 class QuestionnaireResponseSubmitting extends QuestionnaireResponseState {
@@ -47,11 +54,15 @@ class QuestionnaireResponseSubmitted extends QuestionnaireResponseState {
     required this.correctCount,
     required this.totalLocal,
     required this.perQuestionCorrect,
+    this.accuracy,
+    this.completionTime,
   });
   final QuestionnaireModel questionnaire;
   final int correctCount;
   final int totalLocal;
   final Map<String, bool> perQuestionCorrect;
+  final double? accuracy;
+  final int? completionTime;
 
   @override
   List<Object?> get props => [
@@ -59,6 +70,8 @@ class QuestionnaireResponseSubmitted extends QuestionnaireResponseState {
     correctCount,
     totalLocal,
     perQuestionCorrect,
+    accuracy,
+    completionTime,
   ];
 }
 

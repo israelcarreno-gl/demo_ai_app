@@ -6,6 +6,7 @@ import 'package:demoai/features/questionnaire/data/models/question_model.dart';
 import 'package:demoai/features/questionnaire/domain/entities/question_response.dart';
 import 'package:demoai/features/questionnaire/domain/usecases/save_answer.dart';
 import 'package:demoai/features/questionnaire/domain/usecases/submit_responses.dart';
+import 'package:demoai/features/questionnaire/domain/usecases/update_questionnaire.dart';
 import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_response_event.dart';
 import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_response_state.dart';
 
@@ -14,6 +15,7 @@ class QuestionnaireResponseBloc
   QuestionnaireResponseBloc({
     required this.saveAnswer,
     required this.submitResponses,
+    required this.updateQuestionnaire,
   }) : super(const QuestionnaireResponseInitial()) {
     on<StartQuestionnaire>(_onStartQuestionnaire);
     on<AnswerSelected>(_onAnswerSelected);
@@ -24,6 +26,7 @@ class QuestionnaireResponseBloc
   }
   final SaveAnswer saveAnswer;
   final SubmitResponses submitResponses;
+  final UpdateQuestionnaire updateQuestionnaire;
 
   FutureOr<void> _onStartQuestionnaire(
     StartQuestionnaire event,
@@ -35,6 +38,7 @@ class QuestionnaireResponseBloc
         questionnaire: questionnaire,
         currentIndex: 0,
         responses: const <String, QuestionResponse>{},
+        startedAt: DateTime.now(),
       ),
     );
   }
@@ -93,6 +97,7 @@ class QuestionnaireResponseBloc
           questionnaire: stateCur.questionnaire,
           currentIndex: stateCur.currentIndex,
           responses: responses,
+          startedAt: stateCur.startedAt,
         ),
       );
     }
@@ -125,6 +130,7 @@ class QuestionnaireResponseBloc
                 questionnaire: stateCur.questionnaire,
                 currentIndex: currentIndex + 1,
                 responses: stateCur.responses,
+                startedAt: stateCur.startedAt,
               ),
             );
           }
@@ -137,6 +143,7 @@ class QuestionnaireResponseBloc
               questionnaire: stateCur.questionnaire,
               currentIndex: currentIndex + 1,
               responses: stateCur.responses,
+              startedAt: stateCur.startedAt,
             ),
           );
         }
@@ -157,6 +164,7 @@ class QuestionnaireResponseBloc
             questionnaire: stateCur.questionnaire,
             currentIndex: currentIndex - 1,
             responses: stateCur.responses,
+            startedAt: stateCur.startedAt,
           ),
         );
       }
@@ -198,7 +206,23 @@ class QuestionnaireResponseBloc
         if (isCorrect) correctCount++;
       }
 
-      // Submit only argument responses to backend (if any)
+      // Compute timing and accuracy
+      final startedAt = stateCur.startedAt;
+      final completionTime = DateTime.now().difference(startedAt).inSeconds;
+      final totalAnswered = localResponses.length + argumentResponses.length;
+      final accuracy = totalAnswered > 0
+          ? (correctCount / totalAnswered) * 100.0
+          : 0.0;
+
+      // Persist the computed metrics to the questionnaire
+      final updatedQuestionnaire = questionnaire.copyWith(
+        accuracy: accuracy,
+        completionTime: completionTime,
+        updatedAt: DateTime.now(),
+      );
+
+      // Try to update questionnaire; ignore failure for now but log
+      await updateQuestionnaire.call(updatedQuestionnaire);
       if (argumentResponses.isNotEmpty) {
         final result = await submitResponses.call(
           questionnaireId: questionnaire.id,
@@ -210,10 +234,12 @@ class QuestionnaireResponseBloc
           (_) {
             emit(
               QuestionnaireResponseSubmitted(
-                questionnaire: questionnaire,
+                questionnaire: updatedQuestionnaire,
                 correctCount: correctCount,
                 totalLocal: localResponses.length,
                 perQuestionCorrect: perQuestionCorrect,
+                accuracy: accuracy,
+                completionTime: completionTime,
               ),
             );
           },
@@ -222,10 +248,12 @@ class QuestionnaireResponseBloc
         // No backend interaction required
         emit(
           QuestionnaireResponseSubmitted(
-            questionnaire: questionnaire,
+            questionnaire: updatedQuestionnaire,
             correctCount: correctCount,
             totalLocal: localResponses.length,
             perQuestionCorrect: perQuestionCorrect,
+            accuracy: accuracy,
+            completionTime: completionTime,
           ),
         );
       }

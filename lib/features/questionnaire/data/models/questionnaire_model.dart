@@ -17,6 +17,10 @@ class QuestionnaireModel with _$QuestionnaireModel {
     int? documentSize,
     String? documentType,
     List<QuestionModel>? questions,
+    double? accuracy,
+    int? completionTime,
+    int? estimatedTime,
+    String? summary,
   }) = _QuestionnaireModel;
 
   const QuestionnaireModel._();
@@ -35,6 +39,12 @@ class QuestionnaireModel with _$QuestionnaireModel {
       documentName: json['document_name'] as String?,
       documentSize: json['document_size'] as int?,
       documentType: json['document_type'] as String?,
+      accuracy: (json['accuracy'] != null)
+          ? (json['accuracy'] as num).toDouble()
+          : null,
+      completionTime: json['completion_time'] as int?,
+      estimatedTime: json['estimated_time'] as int?,
+      summary: json['summary'] as String?,
       questions: json['questions'] != null
           ? (json['questions'] as List)
                 .map((q) => QuestionModel.fromJson(q as Map<String, dynamic>))
@@ -55,6 +65,10 @@ class QuestionnaireModel with _$QuestionnaireModel {
       'document_name': documentName,
       'document_size': documentSize,
       'document_type': documentType,
+      'accuracy': accuracy,
+      'completion_time': completionTime,
+      'estimated_time': estimatedTime,
+      'summary': summary,
       'questions': questions?.map((q) => q.toJson()).toList(),
     };
   }

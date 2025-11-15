@@ -1,8 +1,13 @@
+import 'package:demoai/core/di/injection_container.dart';
 import 'package:demoai/core/router/app_router.dart';
 import 'package:demoai/core/widgets/confirmation_dialog.dart';
 import 'package:demoai/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:demoai/features/dashboard/presentation/widgets/activity_section.dart';
+// import 'package:intl/intl.dart';
+import 'package:demoai/features/dashboard/presentation/widgets/questionnaire_card.dart';
 import 'package:demoai/features/dashboard/presentation/widgets/stat_card.dart';
+import 'package:demoai/features/questionnaire/data/models/questionnaire_model.dart';
+import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -186,27 +191,171 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildAssessmentsTab() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.assignment_outlined, size: 64, color: Colors.grey[600]),
-          const SizedBox(height: 16),
-          Text(
-            'Assessments',
-            style: TextStyle(
-              color: Colors.grey[400],
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
+    return BlocProvider(
+      create: (context) => getIt<QuestionnaireBloc>(),
+      child: Builder(
+        builder: (context) {
+          final bloc = context.read<QuestionnaireBloc>();
+          final authState = context.read<AuthBloc>().state;
+          if (authState is Authenticated) {
+            if (bloc.state is QuestionnaireInitial) {
+              bloc.add(GetUserQuestionnairesRequested(authState.user.id));
+            }
+          }
+
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: BlocBuilder<QuestionnaireBloc, QuestionnaireState>(
+              builder: (context, state) {
+                if (state is QuestionnaireLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (state is QuestionnaireError) {
+                  return Center(
+                    child: Text(
+                      state.message,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+                if (state is QuestionnaireListLoaded) {
+                  final questionnaires = state.questionnaires;
+                  if (questionnaires.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'No assessments yet',
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                    );
+                  }
+                  return ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: questionnaires.length,
+                    itemBuilder: (context, index) {
+                      final q = questionnaires[index];
+                      return QuestionnaireCard(
+                        questionnaire: q,
+                        onTap: () => _showQuestionnaireSummary(context, q),
+                        onTryAgain: () => GoRouter.of(
+                          context,
+                        ).goNamed('questionnaireResponse', extra: q),
+                      );
+                    },
+                  );
+                }
+                return const Center(
+                  child: Text(
+                    'Assessments',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                );
+              },
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Your assessments will appear here',
-            style: TextStyle(color: Colors.grey[600], fontSize: 14),
-          ),
-        ],
+          );
+        },
       ),
+    );
+  }
+
+  void _showQuestionnaireSummary(BuildContext context, QuestionnaireModel q) {
+    final questions = q.questions ?? [];
+    final total = questions.length;
+    final Map<String, int> typesCount = {};
+    final Map<String, int> difficultyCount = {};
+    for (final qq in questions) {
+      typesCount[qq.questionType] = (typesCount[qq.questionType] ?? 0) + 1;
+      difficultyCount[qq.difficulty] =
+          (difficultyCount[qq.difficulty] ?? 0) + 1;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF0F1720),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 56,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: Colors.white12,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                q.title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Questions: $total',
+                style: const TextStyle(color: Colors.white70),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Types:',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              ...typesCount.entries.map(
+                (e) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    '${e.key.replaceAll('_', ' ')}: ${e.value}',
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Difficulty:',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              ...difficultyCount.entries.map(
+                (e) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    '${e.key}: ${e.value}',
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => GoRouter.of(
+                    context,
+                  ).goNamed('questionnaireResponse', extra: q),
+                  child: const Text('Start/Retry'),
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+          ),
+        );
+      },
     );
   }
 

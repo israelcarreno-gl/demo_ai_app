@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:demoai/features/questionnaire/data/models/question_model.dart';
 import 'package:demoai/features/questionnaire/data/models/questionnaire_model.dart';
 import 'package:demoai/features/questionnaire/domain/entities/question_response.dart';
@@ -19,6 +21,8 @@ class QuestionnaireResponseScreen extends StatefulWidget {
 
 class _QuestionnaireResponseScreenState
     extends State<QuestionnaireResponseScreen> {
+  Timer? _timer;
+  int _elapsedSeconds = 0;
   @override
   void initState() {
     super.initState();
@@ -26,6 +30,30 @@ class _QuestionnaireResponseScreenState
     context.read<QuestionnaireResponseBloc>().add(
       StartQuestionnaire(widget.questionnaire),
     );
+    // Start a periodic timer to update elapsed seconds for UI
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      final state = context.read<QuestionnaireResponseBloc>().state;
+      if (state is QuestionnaireResponseInProgress) {
+        final startedAt = state.startedAt;
+        final elapsed = DateTime.now().difference(startedAt).inSeconds;
+        setState(() {
+          _elapsedSeconds = elapsed;
+        });
+      }
+    });
+  }
+
+  String _formatDuration(int elapsedSeconds) {
+    final minutes = (elapsedSeconds ~/ 60);
+    final seconds = elapsedSeconds % 60;
+    if (minutes > 0) return '${minutes}m ${seconds}s';
+    return '${seconds}s';
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -66,6 +94,15 @@ class _QuestionnaireResponseScreenState
                   AppBar(
                     backgroundColor: const Color(0xFF0F1720),
                     elevation: 0,
+                    leading: Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: Center(
+                        child: Text(
+                          _formatDuration(_elapsedSeconds),
+                          style: const TextStyle(color: Colors.white70),
+                        ),
+                      ),
+                    ),
                     title: const Text('Questionnaire'),
                     automaticallyImplyLeading: false,
                     actions: [
@@ -137,6 +174,7 @@ class _QuestionnaireResponseScreenState
   Widget _buildMultiChoice(QuestionModel question, QuestionResponse? response) {
     final options = question.options ?? [];
     final selected = response?.selectedOptionIndices ?? <int>[];
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Wrap(
       spacing: 12,
@@ -161,29 +199,40 @@ class _QuestionnaireResponseScreenState
             );
           },
           borderRadius: BorderRadius.circular(8),
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? const Color(0xFF2563EB)
-                  : const Color(0xFF15202B),
-              borderRadius: BorderRadius.circular(8),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              // Prevent a single option from expanding beyond the screen width
+              maxWidth: screenWidth - 64,
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (isSelected)
-                  const Icon(Icons.check, color: Colors.white, size: 16)
-                else
-                  const SizedBox(width: 16),
-                const SizedBox(width: 8),
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.white70,
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? const Color(0xFF2563EB)
+                    : const Color(0xFF15202B),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  if (isSelected)
+                    const Icon(Icons.check, color: Colors.white, size: 16)
+                  else
+                    const SizedBox(width: 16),
+                  const SizedBox(width: 8),
+                  // Allow the label to wrap and not overflow horizontally
+                  Flexible(
+                    child: Text(
+                      label,
+                      softWrap: true,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: isSelected ? Colors.white : Colors.white70,
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
@@ -228,6 +277,9 @@ class _QuestionnaireResponseScreenState
           ),
           title: Text(
             label,
+            softWrap: true,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(color: isSelected ? Colors.white : Colors.white70),
           ),
         );

@@ -24,8 +24,10 @@ import 'package:demoai/features/questionnaire/domain/repositories/questionnaire_
 import 'package:demoai/features/questionnaire/domain/repositories/questionnaire_response_repository.dart';
 import 'package:demoai/features/questionnaire/domain/usecases/generate_questionnaire.dart';
 import 'package:demoai/features/questionnaire/domain/usecases/get_questionnaire_by_id.dart';
+import 'package:demoai/features/questionnaire/domain/usecases/get_user_questionnaires.dart';
 import 'package:demoai/features/questionnaire/domain/usecases/save_answer.dart';
 import 'package:demoai/features/questionnaire/domain/usecases/submit_responses.dart';
+import 'package:demoai/features/questionnaire/domain/usecases/update_questionnaire.dart';
 import 'package:demoai/features/questionnaire/domain/usecases/upload_document.dart';
 import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_bloc.dart';
 import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_response_bloc.dart';
@@ -120,6 +122,10 @@ Future<void> initializeDependencies({Environment? initialEnvironment}) async {
     () => GetQuestionnaireById(getIt<QuestionnaireRepository>()),
   );
 
+  getIt.registerLazySingleton<GetUserQuestionnaires>(
+    () => GetUserQuestionnaires(getIt<QuestionnaireRepository>()),
+  );
+
   getIt.registerLazySingleton<UploadDocument>(
     () => UploadDocument(getIt<StorageService>()),
   );
@@ -130,6 +136,7 @@ Future<void> initializeDependencies({Environment? initialEnvironment}) async {
       generateQuestionnaire: getIt<GenerateQuestionnaire>(),
       uploadDocument: getIt<UploadDocument>(),
       getQuestionnaireById: getIt<GetQuestionnaireById>(),
+      getUserQuestionnaires: getIt<GetUserQuestionnaires>(),
     ),
   );
 
@@ -145,12 +152,16 @@ Future<void> initializeDependencies({Environment? initialEnvironment}) async {
   getIt.registerLazySingleton<SubmitResponses>(
     () => SubmitResponses(getIt<QuestionnaireResponseRepository>()),
   );
+  getIt.registerLazySingleton<UpdateQuestionnaire>(
+    () => UpdateQuestionnaire(getIt<QuestionnaireRepository>()),
+  );
 
   // Questionnaire response BLoC
   getIt.registerFactory<QuestionnaireResponseBloc>(
     () => QuestionnaireResponseBloc(
       saveAnswer: getIt<SaveAnswer>(),
       submitResponses: getIt<SubmitResponses>(),
+      updateQuestionnaire: getIt<UpdateQuestionnaire>(),
     ),
   );
 

@@ -28,6 +28,10 @@ mixin _$QuestionnaireModel {
   int? get documentSize => throw _privateConstructorUsedError;
   String? get documentType => throw _privateConstructorUsedError;
   List<QuestionModel>? get questions => throw _privateConstructorUsedError;
+  double? get accuracy => throw _privateConstructorUsedError;
+  int? get completionTime => throw _privateConstructorUsedError;
+  int? get estimatedTime => throw _privateConstructorUsedError;
+  String? get summary => throw _privateConstructorUsedError;
 
   /// Create a copy of QuestionnaireModel
   /// with the given fields replaced by the non-null parameter values.
@@ -55,6 +59,10 @@ abstract class $QuestionnaireModelCopyWith<$Res> {
     int? documentSize,
     String? documentType,
     List<QuestionModel>? questions,
+    double? accuracy,
+    int? completionTime,
+    int? estimatedTime,
+    String? summary,
   });
 }
 
@@ -84,6 +92,10 @@ class _$QuestionnaireModelCopyWithImpl<$Res, $Val extends QuestionnaireModel>
     Object? documentSize = freezed,
     Object? documentType = freezed,
     Object? questions = freezed,
+    Object? accuracy = freezed,
+    Object? completionTime = freezed,
+    Object? estimatedTime = freezed,
+    Object? summary = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -131,6 +143,22 @@ class _$QuestionnaireModelCopyWithImpl<$Res, $Val extends QuestionnaireModel>
                 ? _value.questions
                 : questions // ignore: cast_nullable_to_non_nullable
                       as List<QuestionModel>?,
+            accuracy: freezed == accuracy
+                ? _value.accuracy
+                : accuracy // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            completionTime: freezed == completionTime
+                ? _value.completionTime
+                : completionTime // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            estimatedTime: freezed == estimatedTime
+                ? _value.estimatedTime
+                : estimatedTime // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            summary: freezed == summary
+                ? _value.summary
+                : summary // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -158,6 +186,10 @@ abstract class _$$QuestionnaireModelImplCopyWith<$Res>
     int? documentSize,
     String? documentType,
     List<QuestionModel>? questions,
+    double? accuracy,
+    int? completionTime,
+    int? estimatedTime,
+    String? summary,
   });
 }
 
@@ -186,6 +218,10 @@ class __$$QuestionnaireModelImplCopyWithImpl<$Res>
     Object? documentSize = freezed,
     Object? documentType = freezed,
     Object? questions = freezed,
+    Object? accuracy = freezed,
+    Object? completionTime = freezed,
+    Object? estimatedTime = freezed,
+    Object? summary = freezed,
   }) {
     return _then(
       _$QuestionnaireModelImpl(
@@ -233,6 +269,22 @@ class __$$QuestionnaireModelImplCopyWithImpl<$Res>
             ? _value._questions
             : questions // ignore: cast_nullable_to_non_nullable
                   as List<QuestionModel>?,
+        accuracy: freezed == accuracy
+            ? _value.accuracy
+            : accuracy // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        completionTime: freezed == completionTime
+            ? _value.completionTime
+            : completionTime // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        estimatedTime: freezed == estimatedTime
+            ? _value.estimatedTime
+            : estimatedTime // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        summary: freezed == summary
+            ? _value.summary
+            : summary // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -253,6 +305,10 @@ class _$QuestionnaireModelImpl extends _QuestionnaireModel {
     this.documentSize,
     this.documentType,
     final List<QuestionModel>? questions,
+    this.accuracy,
+    this.completionTime,
+    this.estimatedTime,
+    this.summary,
   }) : _questions = questions,
        super._();
 
@@ -288,8 +344,17 @@ class _$QuestionnaireModelImpl extends _QuestionnaireModel {
   }
 
   @override
+  final double? accuracy;
+  @override
+  final int? completionTime;
+  @override
+  final int? estimatedTime;
+  @override
+  final String? summary;
+
+  @override
   String toString() {
-    return 'QuestionnaireModel(id: $id, userId: $userId, title: $title, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, status: $status, documentName: $documentName, documentSize: $documentSize, documentType: $documentType, questions: $questions)';
+    return 'QuestionnaireModel(id: $id, userId: $userId, title: $title, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, status: $status, documentName: $documentName, documentSize: $documentSize, documentType: $documentType, questions: $questions, accuracy: $accuracy, completionTime: $completionTime, estimatedTime: $estimatedTime, summary: $summary)';
   }
 
   @override
@@ -316,7 +381,14 @@ class _$QuestionnaireModelImpl extends _QuestionnaireModel {
             const DeepCollectionEquality().equals(
               other._questions,
               _questions,
-            ));
+            ) &&
+            (identical(other.accuracy, accuracy) ||
+                other.accuracy == accuracy) &&
+            (identical(other.completionTime, completionTime) ||
+                other.completionTime == completionTime) &&
+            (identical(other.estimatedTime, estimatedTime) ||
+                other.estimatedTime == estimatedTime) &&
+            (identical(other.summary, summary) || other.summary == summary));
   }
 
   @override
@@ -333,6 +405,10 @@ class _$QuestionnaireModelImpl extends _QuestionnaireModel {
     documentSize,
     documentType,
     const DeepCollectionEquality().hash(_questions),
+    accuracy,
+    completionTime,
+    estimatedTime,
+    summary,
   );
 
   /// Create a copy of QuestionnaireModel
@@ -360,6 +436,10 @@ abstract class _QuestionnaireModel extends QuestionnaireModel {
     final int? documentSize,
     final String? documentType,
     final List<QuestionModel>? questions,
+    final double? accuracy,
+    final int? completionTime,
+    final int? estimatedTime,
+    final String? summary,
   }) = _$QuestionnaireModelImpl;
   const _QuestionnaireModel._() : super._();
 
@@ -385,6 +465,14 @@ abstract class _QuestionnaireModel extends QuestionnaireModel {
   String? get documentType;
   @override
   List<QuestionModel>? get questions;
+  @override
+  double? get accuracy;
+  @override
+  int? get completionTime;
+  @override
+  int? get estimatedTime;
+  @override
+  String? get summary;
 
   /// Create a copy of QuestionnaireModel
   /// with the given fields replaced by the non-null parameter values.

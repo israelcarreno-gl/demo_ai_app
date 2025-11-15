@@ -2,6 +2,7 @@ import 'package:demoai/features/questionnaire/data/models/questionnaire_generati
 import 'package:demoai/features/questionnaire/data/models/questionnaire_model.dart';
 import 'package:demoai/features/questionnaire/domain/usecases/generate_questionnaire.dart';
 import 'package:demoai/features/questionnaire/domain/usecases/get_questionnaire_by_id.dart';
+import 'package:demoai/features/questionnaire/domain/usecases/get_user_questionnaires.dart';
 import 'package:demoai/features/questionnaire/domain/usecases/upload_document.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,14 +15,17 @@ class QuestionnaireBloc extends Bloc<QuestionnaireEvent, QuestionnaireState> {
     required this.generateQuestionnaire,
     required this.uploadDocument,
     required this.getQuestionnaireById,
+    required this.getUserQuestionnaires,
   }) : super(QuestionnaireInitial()) {
     on<GenerateQuestionnaireRequested>(_onGenerateQuestionnaireRequested);
     on<GetQuestionnaireRequested>(_onGetQuestionnaireRequested);
+    on<GetUserQuestionnairesRequested>(_onGetUserQuestionnairesRequested);
   }
 
   final GenerateQuestionnaire generateQuestionnaire;
   final UploadDocument uploadDocument;
   final GetQuestionnaireById getQuestionnaireById;
+  final GetUserQuestionnaires getUserQuestionnaires;
 
   Future<void> _onGenerateQuestionnaireRequested(
     GenerateQuestionnaireRequested event,
@@ -66,6 +70,20 @@ class QuestionnaireBloc extends Bloc<QuestionnaireEvent, QuestionnaireState> {
     result.fold(
       (failure) => emit(QuestionnaireError(failure.message)),
       (questionnaire) => emit(QuestionnaireLoaded(questionnaire)),
+    );
+  }
+
+  Future<void> _onGetUserQuestionnairesRequested(
+    GetUserQuestionnairesRequested event,
+    Emitter<QuestionnaireState> emit,
+  ) async {
+    emit(QuestionnaireLoading());
+
+    final result = await getUserQuestionnaires(event.userId);
+
+    result.fold(
+      (failure) => emit(QuestionnaireError(failure.message)),
+      (questionnaires) => emit(QuestionnaireListLoaded(questionnaires)),
     );
   }
 }

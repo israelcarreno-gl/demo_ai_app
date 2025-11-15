@@ -80,14 +80,32 @@ class QuestionnaireRepositoryImpl implements QuestionnaireRepository {
     String userId,
   ) async {
     try {
-      final data = await _supabaseService.client
-          .from(_tableName)
-          .select()
-          .eq('user_id', userId)
-          .order('created_at', ascending: false);
+      // Prefer calling the Edge Function that returns questionnaires for the user.
+      final response = await _supabaseService.client.functions.invoke(
+        'get-questionnaires',
+        body: {'user_id': userId},
+      );
 
-      final questionnaires = data
-          .map((json) => QuestionnaireModel.fromJson(json))
+      if (response.data == null) {
+        return const Left(
+          ServerFailure(message: 'No data received from server'),
+        );
+      }
+
+      if (response.data is Map && response.data['error'] != null) {
+        final error = response.data['error'];
+        final errorMessage = error is Map && error['message'] != null
+            ? error['message'].toString()
+            : 'Unknown error occurred';
+        return Left(ServerFailure(message: errorMessage));
+      }
+
+      final data = response.data as Map<String, dynamic>;
+      final questionnairesList = data['questionnaires'] as List<dynamic>? ?? [];
+      final questionnaires = questionnairesList
+          .map(
+            (json) => QuestionnaireModel.fromJson(json as Map<String, dynamic>),
+          )
           .toList();
 
       return Right(questionnaires);

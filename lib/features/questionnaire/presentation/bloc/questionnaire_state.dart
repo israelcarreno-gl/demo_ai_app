@@ -37,3 +37,12 @@ class QuestionnaireError extends QuestionnaireState {
   @override
   List<Object?> get props => [message];
 }
+
+class QuestionnaireListLoaded extends QuestionnaireState {
+  const QuestionnaireListLoaded(this.questionnaires);
+
+  final List<QuestionnaireModel> questionnaires;
+
+  @override
+  List<Object?> get props => [questionnaires];
+}
