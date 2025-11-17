@@ -4,37 +4,14 @@ import 'package:demoai/core/l10n/locale_cubit.dart';
 import 'package:demoai/core/network/dio_client.dart';
 import 'package:demoai/core/observers/app_bloc_observer.dart';
 import 'package:demoai/core/services/env_loader_service.dart';
-import 'package:demoai/core/services/storage_service.dart';
-import 'package:demoai/core/services/supabase_service.dart';
 import 'package:demoai/core/theme/theme_cubit.dart';
-import 'package:demoai/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:demoai/features/auth/domain/repositories/auth_repository.dart';
-import 'package:demoai/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:demoai/features/demo/data/datasources/joke_api_service.dart';
-import 'package:demoai/features/demo/data/datasources/joke_remote_data_source.dart';
-import 'package:demoai/features/demo/data/datasources/joke_remote_data_source_impl.dart';
-import 'package:demoai/features/demo/data/repositories/joke_repository_impl.dart';
-import 'package:demoai/features/demo/domain/repositories/joke_repository.dart';
-import 'package:demoai/features/demo/domain/usecases/get_jokes_by_type.dart';
-import 'package:demoai/features/demo/domain/usecases/get_random_joke.dart';
-import 'package:demoai/features/demo/presentation/bloc/joke_bloc.dart';
-import 'package:demoai/features/questionnaire/data/repositories/questionnaire_repository_impl.dart';
-import 'package:demoai/features/questionnaire/data/repositories/questionnaire_response_repository_impl.dart';
-import 'package:demoai/features/questionnaire/domain/repositories/questionnaire_repository.dart';
-import 'package:demoai/features/questionnaire/domain/repositories/questionnaire_response_repository.dart';
-import 'package:demoai/features/questionnaire/domain/usecases/generate_questionnaire.dart';
-import 'package:demoai/features/questionnaire/domain/usecases/get_questionnaire_by_id.dart';
-import 'package:demoai/features/questionnaire/domain/usecases/get_user_questionnaires.dart';
-import 'package:demoai/features/questionnaire/domain/usecases/save_answer.dart';
-import 'package:demoai/features/questionnaire/domain/usecases/submit_responses.dart';
-import 'package:demoai/features/questionnaire/domain/usecases/update_questionnaire.dart';
-import 'package:demoai/features/questionnaire/domain/usecases/upload_document.dart';
-import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_bloc.dart';
-import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_response_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:injectable/injectable.dart' hide Environment;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'injection_container.config.dart';
 
 /// Service locator instance
 final getIt = GetIt.instance;
@@ -91,110 +68,17 @@ Future<void> initializeDependencies({Environment? initialEnvironment}) async {
     () => LocaleCubit(getIt<SharedPreferences>()),
   );
 
-  // Supabase
-  getIt.registerLazySingleton<SupabaseService>(
-    () => SupabaseService(getIt<AppConfig>()),
-  );
+  // Use code generation to register injectable annotated classes
+  getIt.init();
 
-  // Storage
-  getIt.registerLazySingleton<StorageService>(
-    () => StorageService(getIt<SupabaseService>().client),
-  );
-
-  // Auth
-  getIt.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(getIt<SupabaseService>()),
-  );
-
-  getIt.registerFactory<AuthBloc>(() => AuthBloc(getIt<AuthRepository>()));
-
-  // Questionnaire
-  getIt.registerLazySingleton<QuestionnaireRepository>(
-    () => QuestionnaireRepositoryImpl(getIt<SupabaseService>()),
-  );
-
-  // Questionnaire Use Cases
-  getIt.registerLazySingleton<GenerateQuestionnaire>(
-    () => GenerateQuestionnaire(getIt<QuestionnaireRepository>()),
-  );
-
-  getIt.registerLazySingleton<GetQuestionnaireById>(
-    () => GetQuestionnaireById(getIt<QuestionnaireRepository>()),
-  );
-
-  getIt.registerLazySingleton<GetUserQuestionnaires>(
-    () => GetUserQuestionnaires(getIt<QuestionnaireRepository>()),
-  );
-
-  getIt.registerLazySingleton<UploadDocument>(
-    () => UploadDocument(getIt<StorageService>()),
-  );
-
-  // Questionnaire BLoC
-  getIt.registerFactory<QuestionnaireBloc>(
-    () => QuestionnaireBloc(
-      generateQuestionnaire: getIt<GenerateQuestionnaire>(),
-      uploadDocument: getIt<UploadDocument>(),
-      getQuestionnaireById: getIt<GetQuestionnaireById>(),
-      getUserQuestionnaires: getIt<GetUserQuestionnaires>(),
-    ),
-  );
-
-  // Questionnaire responses repository
-  getIt.registerLazySingleton<QuestionnaireResponseRepository>(
-    () => QuestionnaireResponseRepositoryImpl(getIt<SupabaseService>()),
-  );
-
-  // Use cases for responses
-  getIt.registerLazySingleton<SaveAnswer>(
-    () => SaveAnswer(getIt<QuestionnaireResponseRepository>()),
-  );
-  getIt.registerLazySingleton<SubmitResponses>(
-    () => SubmitResponses(getIt<QuestionnaireResponseRepository>()),
-  );
-  getIt.registerLazySingleton<UpdateQuestionnaire>(
-    () => UpdateQuestionnaire(getIt<QuestionnaireRepository>()),
-  );
-
-  // Questionnaire response BLoC
-  getIt.registerFactory<QuestionnaireResponseBloc>(
-    () => QuestionnaireResponseBloc(
-      saveAnswer: getIt<SaveAnswer>(),
-      submitResponses: getIt<SubmitResponses>(),
-      updateQuestionnaire: getIt<UpdateQuestionnaire>(),
-    ),
-  );
+  // Rest of injections are generated by injectable
 
   // Demo Feature
-  // Data sources
-  getIt.registerLazySingleton<JokeApiService>(
-    () => JokeApiService(getIt<Dio>()),
-  );
-  getIt.registerLazySingleton<JokeRemoteDataSource>(
-    () => JokeRemoteDataSourceImpl(getIt<JokeApiService>()),
-  );
-
-  // Repositories
-  getIt.registerLazySingleton<JokeRepository>(
-    () => JokeRepositoryImpl(getIt<JokeRemoteDataSource>()),
-  );
-
-  // Use cases
-  getIt.registerLazySingleton<GetRandomJoke>(
-    () => GetRandomJoke(getIt<JokeRepository>()),
-  );
-  getIt.registerLazySingleton<GetJokesByType>(
-    () => GetJokesByType(getIt<JokeRepository>()),
-  );
-
-  // BLoC
-  getIt.registerFactory<JokeBloc>(
-    () => JokeBloc(
-      getRandomJoke: getIt<GetRandomJoke>(),
-      getJokesByType: getIt<GetJokesByType>(),
-    ),
-  );
+  // Demo feature registrations are also provided by the generated config
 }
+
+@InjectableInit()
+Future<void> configureGeneratedDependencies() async => getIt.init();
 
 /// Reload dependencies when environment changes
 Future<void> reloadDependenciesForEnvironment() async {
@@ -218,10 +102,5 @@ Future<void> reloadDependenciesForEnvironment() async {
     getIt.registerLazySingleton<Dio>(() => getIt<DioClient>().dio);
   }
 
-  if (getIt.isRegistered<JokeApiService>()) {
-    await getIt.unregister<JokeApiService>();
-    getIt.registerLazySingleton<JokeApiService>(
-      () => JokeApiService(getIt<Dio>()),
-    );
-  }
+  // Demo feature uses injectable generated configuration - no manual re-registration
 }

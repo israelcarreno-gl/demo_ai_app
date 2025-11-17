@@ -13,7 +13,9 @@ import 'package:demoai/features/questionnaire/domain/usecases/update_questionnai
 import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_bloc.dart';
 import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_response_event.dart';
 import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_response_state.dart';
+import 'package:injectable/injectable.dart';
 
+@injectable
 class QuestionnaireResponseBloc
     extends Bloc<QuestionnaireResponseEvent, QuestionnaireResponseState> {
   QuestionnaireResponseBloc({

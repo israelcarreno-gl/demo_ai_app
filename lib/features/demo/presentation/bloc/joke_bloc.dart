@@ -3,8 +3,10 @@ import 'package:demoai/features/demo/domain/usecases/get_random_joke.dart';
 import 'package:demoai/features/demo/presentation/bloc/joke_event.dart';
 import 'package:demoai/features/demo/presentation/bloc/joke_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 
 /// BLoC for managing joke-related state and events
+@injectable
 class JokeBloc extends Bloc<JokeEvent, JokeState> {
   JokeBloc({
     required GetRandomJoke getRandomJoke,

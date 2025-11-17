@@ -6,10 +6,12 @@ import 'package:demoai/features/questionnaire/domain/usecases/get_user_questionn
 import 'package:demoai/features/questionnaire/domain/usecases/upload_document.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 
 part 'questionnaire_event.dart';
 part 'questionnaire_state.dart';
 
+@injectable
 class QuestionnaireBloc extends Bloc<QuestionnaireEvent, QuestionnaireState> {
   QuestionnaireBloc({
     required this.generateQuestionnaire,

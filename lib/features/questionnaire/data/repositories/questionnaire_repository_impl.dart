@@ -2,17 +2,18 @@ import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 import 'package:demoai/core/error/failures.dart';
-import 'package:demoai/core/services/supabase_service.dart';
+import 'package:demoai/features/questionnaire/data/datasources/questionnaire_remote_data_source.dart';
 import 'package:demoai/features/questionnaire/data/models/questionnaire_generation_request.dart';
 import 'package:demoai/features/questionnaire/data/models/questionnaire_model.dart';
 import 'package:demoai/features/questionnaire/domain/repositories/questionnaire_repository.dart';
+import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+@LazySingleton(as: QuestionnaireRepository)
 class QuestionnaireRepositoryImpl implements QuestionnaireRepository {
-  QuestionnaireRepositoryImpl(this._supabaseService);
+  QuestionnaireRepositoryImpl(this._remoteDataSource);
 
-  final SupabaseService _supabaseService;
-  static const String _tableName = 'questionnaires';
+  final QuestionnaireRemoteDataSource _remoteDataSource;
 
   @override
   Future<Either<Failure, QuestionnaireModel>> generateQuestionnaire({
@@ -20,31 +21,22 @@ class QuestionnaireRepositoryImpl implements QuestionnaireRepository {
     required String storagePath,
   }) async {
     try {
-      // Call Edge Function to generate questionnaire
-      final response = await _supabaseService.client.functions.invoke(
-        'generate-questionnaire',
-        body: {
-          'user_id': request.userId,
-          'document_path': storagePath,
-          'document_name': request.documentName,
-          'document_size': request.documentSize,
-          'document_type': request.documentType,
-          'question_type': _questionTypeToString(request.questionType),
-          'number_of_questions': request.numberOfQuestions,
-          'difficulty': _difficultyToString(request.difficulty),
-        },
+      // Call Edge Function to generate questionnaire via datasource
+      final response = await _remoteDataSource.generateQuestionnaire(
+        request: request,
+        storagePath: storagePath,
       );
 
       // Check for errors in response
-      if (response.data == null) {
+      if (response.isEmpty) {
         return const Left(
           ServerFailure(message: 'No data received from server'),
         );
       }
 
       // Check if response contains error
-      if (response.data is Map && response.data['error'] != null) {
-        final error = response.data['error'];
+      if (response['error'] != null) {
+        final error = response['error'];
         final errorMessage = error is Map && error['message'] != null
             ? error['message'].toString()
             : 'Unknown error occurred';
@@ -52,7 +44,7 @@ class QuestionnaireRepositoryImpl implements QuestionnaireRepository {
       }
 
       // Parse response to QuestionnaireModel
-      final questionnaireData = response.data as Map<String, dynamic>;
+      final questionnaireData = response;
 
       log('Questionnaire generation response: $questionnaireData');
 
@@ -80,14 +72,10 @@ class QuestionnaireRepositoryImpl implements QuestionnaireRepository {
     String userId,
   ) async {
     try {
-      // Query the questionnaires table directly and include nested questions
-      final data = await _supabaseService.client
-          .from(_tableName)
-          .select('*, questions(*)')
-          .eq('user_id', userId)
-          .order('created_at', ascending: false);
+      // Query the questionnaires table directly and include nested questions via datasource
+      final data = await _remoteDataSource.getUserQuestionnaires(userId);
 
-      final questionnairesList = data as List<dynamic>;
+      final questionnairesList = data;
       final questionnaires = questionnairesList
           .map(
             (json) => QuestionnaireModel.fromJson(json as Map<String, dynamic>),
@@ -105,11 +93,7 @@ class QuestionnaireRepositoryImpl implements QuestionnaireRepository {
     String id,
   ) async {
     try {
-      final data = await _supabaseService.client
-          .from(_tableName)
-          .select('*, questions(*)')
-          .eq('id', id)
-          .single();
+      final data = await _remoteDataSource.getQuestionnaireById(id);
 
       return Right(QuestionnaireModel.fromJson(data));
     } catch (e) {
@@ -123,11 +107,9 @@ class QuestionnaireRepositoryImpl implements QuestionnaireRepository {
     QuestionnaireModel questionnaire,
   ) async {
     try {
-      final data = await _supabaseService.client
-          .from(_tableName)
-          .insert(questionnaire.toJson())
-          .select()
-          .single();
+      final data = await _remoteDataSource.createQuestionnaire(
+        questionnaire.toJson(),
+      );
 
       return Right(QuestionnaireModel.fromJson(data));
     } catch (e) {
@@ -145,12 +127,10 @@ class QuestionnaireRepositoryImpl implements QuestionnaireRepository {
       // Remove nested questions from payload when updating questionnaire top-level fields
       payload.remove('questions');
       log('Updating questionnaire id=${questionnaire.id} with: $payload');
-      final data = await _supabaseService.client
-          .from(_tableName)
-          .update(payload)
-          .eq('id', questionnaire.id)
-          .select()
-          .single();
+      final data = await _remoteDataSource.updateQuestionnaire(
+        payload,
+        questionnaire.id,
+      );
 
       // just to make sure the updqate was successful
       if (data['accuracy'] != questionnaire.accuracy ||
@@ -164,12 +144,10 @@ class QuestionnaireRepositoryImpl implements QuestionnaireRepository {
         log(
           'Re-updating analytics fields for questionnaire id=${questionnaire.id} with: $analyticsPayload',
         );
-        final data2 = await _supabaseService.client
-            .from(_tableName)
-            .update(analyticsPayload)
-            .eq('id', questionnaire.id)
-            .select()
-            .single();
+        final data2 = await _remoteDataSource.updateQuestionnaire(
+          analyticsPayload,
+          questionnaire.id,
+        );
         log('Re-update response: $data2');
         return Right(QuestionnaireModel.fromJson(data2));
       }
@@ -184,36 +162,11 @@ class QuestionnaireRepositoryImpl implements QuestionnaireRepository {
   @override
   Future<Either<Failure, void>> deleteQuestionnaire(String id) async {
     try {
-      await _supabaseService.client.from(_tableName).delete().eq('id', id);
+      await _remoteDataSource.deleteQuestionnaire(id);
 
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
-    }
-  }
-
-  // Helper methods to convert enums to backend format
-  String _questionTypeToString(QuestionType type) {
-    switch (type) {
-      case QuestionType.multiChoice:
-        return 'multi_choice';
-      case QuestionType.singleChoice:
-        return 'single_choice';
-      case QuestionType.argument:
-        return 'argument';
-      case QuestionType.random:
-        return 'random';
-    }
-  }
-
-  String _difficultyToString(QuestionDifficulty difficulty) {
-    switch (difficulty) {
-      case QuestionDifficulty.easy:
-        return 'easy';
-      case QuestionDifficulty.medium:
-        return 'medium';
-      case QuestionDifficulty.hard:
-        return 'hard';
     }
   }
 }

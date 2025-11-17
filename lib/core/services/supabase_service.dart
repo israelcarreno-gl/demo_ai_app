@@ -1,6 +1,8 @@
 import 'package:demoai/core/config/app_config.dart';
+import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+@lazySingleton
 class SupabaseService {
   SupabaseService(this._config);
 

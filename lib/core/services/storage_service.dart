@@ -2,12 +2,15 @@ import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:demoai/core/error/failures.dart';
+import 'package:demoai/core/services/supabase_service.dart';
+import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+@lazySingleton
 class StorageService {
-  StorageService(this._supabaseClient);
+  StorageService(this._supabaseService);
 
-  final SupabaseClient _supabaseClient;
+  final SupabaseService _supabaseService;
 
   static const String _bucketName = 'questionnaire-documents';
 
@@ -22,7 +25,7 @@ class StorageService {
       final filePath = '$userId/$fileName';
 
       // Use upsert to overwrite if file already exists
-      await _supabaseClient.storage
+      await _supabaseService.client.storage
           .from(_bucketName)
           .upload(filePath, file, fileOptions: const FileOptions(upsert: true));
 
@@ -44,7 +47,7 @@ class StorageService {
     required String filePath,
   }) async {
     try {
-      final bytes = await _supabaseClient.storage
+      final bytes = await _supabaseService.client.storage
           .from(_bucketName)
           .download(filePath);
 
@@ -61,7 +64,9 @@ class StorageService {
     required String filePath,
   }) async {
     try {
-      await _supabaseClient.storage.from(_bucketName).remove([filePath]);
+      await _supabaseService.client.storage.from(_bucketName).remove([
+        filePath,
+      ]);
 
       return const Right(null);
     } on StorageException catch (e) {
@@ -73,13 +78,15 @@ class StorageService {
 
   /// Get public URL for a file
   String getPublicUrl(String filePath) {
-    return _supabaseClient.storage.from(_bucketName).getPublicUrl(filePath);
+    return _supabaseService.client.storage
+        .from(_bucketName)
+        .getPublicUrl(filePath);
   }
 
   /// Check if bucket exists and is accessible
   Future<Either<Failure, bool>> checkBucketAccess() async {
     try {
-      await _supabaseClient.storage.from(_bucketName).list();
+      await _supabaseService.client.storage.from(_bucketName).list();
       return const Right(true);
     } on StorageException catch (e) {
       return Left(ServerFailure(message: e.message));

@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:demoai/core/error/failures.dart';
 import 'package:demoai/core/services/storage_service.dart';
+import 'package:injectable/injectable.dart';
 
+@injectable
 class UploadDocument {
   UploadDocument(this._storageService);
 

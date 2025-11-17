@@ -5,7 +5,9 @@ import 'package:demoai/core/error/failures.dart';
 import 'package:demoai/core/services/supabase_service.dart';
 import 'package:demoai/features/questionnaire/domain/entities/question_response.dart';
 import 'package:demoai/features/questionnaire/domain/repositories/questionnaire_response_repository.dart';
+import 'package:injectable/injectable.dart';
 
+@LazySingleton(as: QuestionnaireResponseRepository)
 class QuestionnaireResponseRepositoryImpl
     implements QuestionnaireResponseRepository {
   QuestionnaireResponseRepositoryImpl(this._supabaseService);
