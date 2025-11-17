@@ -3,6 +3,7 @@ import 'package:demoai/features/auth/data/repositories/auth_repository_impl.dart
 // more test imports
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../mocks/mock_datasources.dart';
 import '../../../../mocks/mock_responses.dart';
 
@@ -10,13 +11,19 @@ void main() {
   late AuthRepositoryImpl repository;
   late MockAuthRemoteDataSource mockRemoteDataSource;
   late MockAuthResponse mockAuthResponse;
-  late MockUser mockUser;
+  final mockUser = User(
+    id: 'user-id',
+    appMetadata: {},
+    userMetadata: {},
+    aud: '',
+    email: 'este@gmail.com',
+    createdAt: DateTime.now().toString(),
+  );
 
   setUp(() {
     mockRemoteDataSource = MockAuthRemoteDataSource();
     repository = AuthRepositoryImpl(mockRemoteDataSource);
     mockAuthResponse = MockAuthResponse();
-    mockUser = MockUser();
   });
 
   group('signInWithEmail', () {
@@ -25,8 +32,6 @@ void main() {
       () async {
         // arrange
         when(() => mockAuthResponse.user).thenReturn(mockUser);
-        when(() => mockUser.id).thenReturn('user-id');
-        when(() => mockUser.email).thenReturn('a@a.com');
         when(
           () => mockRemoteDataSource.signInWithEmail(
             email: any(named: 'email'),
@@ -63,8 +68,6 @@ void main() {
   group('getCurrentUser', () {
     test('returns UserModel when currentUser is present', () async {
       when(() => mockRemoteDataSource.currentUser).thenReturn(mockUser);
-      when(() => mockUser.id).thenReturn('user-id');
-      when(() => mockUser.email).thenReturn('a@a.com');
 
       final result = await repository.getCurrentUser();
       expect(result.isRight(), true);

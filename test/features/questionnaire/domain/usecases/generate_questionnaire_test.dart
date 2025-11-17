@@ -17,6 +17,18 @@ void main() {
   setUp(() {
     mockRepository = MockQuestionnaireRepository();
     usecase = GenerateQuestionnaire(mockRepository);
+    // register fallback for QuestionnaireGenerationRequest used by mocktail `any(named:)` calls
+    registerFallbackValue(
+      const QuestionnaireGenerationRequest(
+        documentName: '',
+        documentSize: 0,
+        documentType: '',
+        questionType: QuestionType.singleChoice,
+        numberOfQuestions: 0,
+        difficulty: QuestionDifficulty.easy,
+        userId: '',
+      ),
+    );
   });
 
   test('should call repository and return generated questionnaire', () async {
