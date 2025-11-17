@@ -4,26 +4,21 @@ import 'package:demoai/core/l10n/locale_cubit.dart';
 import 'package:demoai/core/network/dio_client.dart';
 import 'package:demoai/core/observers/app_bloc_observer.dart';
 import 'package:demoai/core/services/env_loader_service.dart';
-import 'package:demoai/core/services/supabase_service.dart';
 import 'package:demoai/core/theme/theme_cubit.dart';
-import 'package:demoai/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:demoai/features/auth/domain/repositories/auth_repository.dart';
-import 'package:demoai/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:demoai/features/demo/data/datasources/joke_api_service.dart';
-import 'package:demoai/features/demo/data/datasources/joke_remote_data_source.dart';
-import 'package:demoai/features/demo/data/datasources/joke_remote_data_source_impl.dart';
-import 'package:demoai/features/demo/data/repositories/joke_repository_impl.dart';
-import 'package:demoai/features/demo/domain/repositories/joke_repository.dart';
-import 'package:demoai/features/demo/domain/usecases/get_jokes_by_type.dart';
-import 'package:demoai/features/demo/domain/usecases/get_random_joke.dart';
-import 'package:demoai/features/demo/presentation/bloc/joke_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:injectable/injectable.dart' hide Environment;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'injection_container.config.dart';
+
 /// Service locator instance
 final getIt = GetIt.instance;
+
+/// Configure generated dependencies
+@InjectableInit()
+Future<void> configureGeneratedDependencies() async => getIt.init();
 
 /// Initialize dependency injection
 Future<void> initializeDependencies({Environment? initialEnvironment}) async {
@@ -37,7 +32,6 @@ Future<void> initializeDependencies({Environment? initialEnvironment}) async {
   // Environment Manager
   final envManager = EnvironmentManager(sharedPreferences);
 
-  // Si se provee un ambiente inicial, usarlo (para debug)
   if (initialEnvironment != null) {
     await envManager.setEnvironment(initialEnvironment);
   }
@@ -77,47 +71,7 @@ Future<void> initializeDependencies({Environment? initialEnvironment}) async {
     () => LocaleCubit(getIt<SharedPreferences>()),
   );
 
-  // Supabase
-  getIt.registerLazySingleton<SupabaseService>(
-    () => SupabaseService(getIt<AppConfig>()),
-  );
-
-  // Auth
-  getIt.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(getIt<SupabaseService>()),
-  );
-
-  getIt.registerFactory<AuthBloc>(() => AuthBloc(getIt<AuthRepository>()));
-
-  // Demo Feature
-  // Data sources
-  getIt.registerLazySingleton<JokeApiService>(
-    () => JokeApiService(getIt<Dio>()),
-  );
-  getIt.registerLazySingleton<JokeRemoteDataSource>(
-    () => JokeRemoteDataSourceImpl(getIt<JokeApiService>()),
-  );
-
-  // Repositories
-  getIt.registerLazySingleton<JokeRepository>(
-    () => JokeRepositoryImpl(getIt<JokeRemoteDataSource>()),
-  );
-
-  // Use cases
-  getIt.registerLazySingleton<GetRandomJoke>(
-    () => GetRandomJoke(getIt<JokeRepository>()),
-  );
-  getIt.registerLazySingleton<GetJokesByType>(
-    () => GetJokesByType(getIt<JokeRepository>()),
-  );
-
-  // BLoC
-  getIt.registerFactory<JokeBloc>(
-    () => JokeBloc(
-      getRandomJoke: getIt<GetRandomJoke>(),
-      getJokesByType: getIt<GetJokesByType>(),
-    ),
-  );
+  getIt.init();
 }
 
 /// Reload dependencies when environment changes
@@ -140,12 +94,5 @@ Future<void> reloadDependenciesForEnvironment() async {
   if (getIt.isRegistered<Dio>()) {
     await getIt.unregister<Dio>();
     getIt.registerLazySingleton<Dio>(() => getIt<DioClient>().dio);
-  }
-
-  if (getIt.isRegistered<JokeApiService>()) {
-    await getIt.unregister<JokeApiService>();
-    getIt.registerLazySingleton<JokeApiService>(
-      () => JokeApiService(getIt<Dio>()),
-    );
   }
 }

@@ -1,15 +1,25 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:demoai/core/di/injection_container.dart';
 import 'package:demoai/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:demoai/features/auth/presentation/screens/login_screen.dart';
 import 'package:demoai/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:demoai/features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:demoai/features/demo/presentation/screens/demo_screen.dart';
 import 'package:demoai/features/demo/presentation/screens/detail_screen.dart';
+import 'package:demoai/features/questionnaire/data/models/questionnaire_model.dart';
+import 'package:demoai/features/questionnaire/domain/entities/question_response.dart';
+import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_bloc.dart';
+import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_response_bloc.dart';
+import 'package:demoai/features/questionnaire/presentation/screens/document_preview_screen.dart';
 import 'package:demoai/features/questionnaire/presentation/screens/document_upload_screen.dart';
+import 'package:demoai/features/questionnaire/presentation/screens/questionnaire_detail_screen.dart';
 import 'package:demoai/features/questionnaire/presentation/screens/questionnaire_options_screen.dart';
+import 'package:demoai/features/questionnaire/presentation/screens/questionnaire_response_screen.dart';
+import 'package:demoai/features/questionnaire/presentation/screens/questionnaire_result_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRoutes {
@@ -20,6 +30,10 @@ class AppRoutes {
   static const String detail = '/detail';
   static const String documentUpload = '/document-upload';
   static const String questionnaireOptions = '/questionnaire-options';
+  static const String questionnaireDetail = '/questionnaire-detail';
+  static const String questionnaireResponse = '/questionnaire-response';
+  static const String questionnaireResult = '/questionnaire-result';
+  static const String documentPreview = '/document-preview';
 }
 
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -60,7 +74,7 @@ class AppRouter {
         return AppRoutes.welcome;
       }
 
-      return null; // No redirigir
+      return null;
     },
     routes: [
       GoRoute(
@@ -101,11 +115,72 @@ class AppRouter {
         name: 'questionnaireOptions',
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>?;
-          return QuestionnaireOptionsScreen(
-            documentFile: extra?['file'] as File,
-            fileName: extra?['fileName'] as String,
-            fileSize: extra?['fileSize'] as int,
-            fileType: extra?['fileType'] as String,
+          return BlocProvider(
+            create: (context) => getIt<QuestionnaireBloc>(),
+            child: QuestionnaireOptionsScreen(
+              documentFile: extra?['file'] as File,
+              fileName: extra?['fileName'] as String,
+              fileSize: extra?['fileSize'] as int,
+              fileType: extra?['fileType'] as String,
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.questionnaireDetail,
+        name: 'questionnaireDetail',
+        builder: (context, state) {
+          final questionnaire = state.extra! as QuestionnaireModel;
+          return QuestionnaireDetailScreen(questionnaire: questionnaire);
+        },
+      ),
+
+      GoRoute(
+        path: AppRoutes.questionnaireResponse,
+        name: 'questionnaireResponse',
+        builder: (context, state) {
+          final questionnaire = state.extra! as QuestionnaireModel;
+          return BlocProvider(
+            create: (context) => getIt<QuestionnaireResponseBloc>(),
+            child: QuestionnaireResponseScreen(questionnaire: questionnaire),
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.questionnaireResult,
+        name: 'questionnaireResult',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final questionnaire = extra?['questionnaire'] as QuestionnaireModel?;
+          final responses =
+              extra?['responses'] as Map<String, QuestionResponse>?;
+          return QuestionnaireResultScreen(
+            questionnaire: questionnaire,
+            correctCount: extra?['correctCount'] as int? ?? 0,
+            totalLocal: extra?['totalLocal'] as int? ?? 0,
+            perQuestionCorrect:
+                extra?['perQuestionCorrect'] as Map<String, bool>? ?? {},
+            responses: responses ?? {},
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.documentPreview,
+        name: 'documentPreview',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final documentPath = extra?['documentPath'] as String?;
+          final documentType = extra?['documentType'] as String?;
+          final documentName = extra?['documentName'] as String?;
+          if (documentPath == null) {
+            return const Scaffold(
+              body: Center(child: Text('No document specified')),
+            );
+          }
+          return DocumentPreviewScreen(
+            documentPath: documentPath,
+            documentType: documentType,
+            documentName: documentName,
           );
         },
       ),

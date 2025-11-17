@@ -2,29 +2,21 @@ import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 import 'package:demoai/core/error/failures.dart';
-import 'package:demoai/core/services/supabase_service.dart';
+import 'package:demoai/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:demoai/features/auth/data/models/user_model.dart';
 import 'package:demoai/features/auth/domain/repositories/auth_repository.dart';
+import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+@LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
-  AuthRepositoryImpl(this._supabaseService);
+  AuthRepositoryImpl(this._remoteDataSource);
 
-  final SupabaseService _supabaseService;
-  static const String _usersTable = 'users';
+  final AuthRemoteDataSource _remoteDataSource;
 
   Future<void> _syncUserToDatabase(User user) async {
     try {
-      final userModel = UserModel.fromSupabaseUser(user);
-
-      await _supabaseService.client.from(_usersTable).upsert({
-        'id': userModel.id,
-        'email': userModel.email,
-        'phone': userModel.phone,
-        'email_confirmed_at': userModel.emailConfirmedAt?.toIso8601String(),
-        'last_sign_in_at': DateTime.now().toIso8601String(),
-        'updated_at': DateTime.now().toIso8601String(),
-      }, onConflict: 'id');
+      await _remoteDataSource.upsertUser(user);
     } catch (e) {
       log('Failed to sync user to database: $e');
     }
@@ -36,7 +28,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) async {
     try {
-      final response = await _supabaseService.signInWithEmail(
+      final response = await _remoteDataSource.signInWithEmail(
         email: email,
         password: password,
       );
@@ -61,7 +53,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) async {
     try {
-      final response = await _supabaseService.signUpWithEmail(
+      final response = await _remoteDataSource.signUpWithEmail(
         email: email,
         password: password,
       );
@@ -83,7 +75,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, void>> signOut() async {
     try {
-      await _supabaseService.signOut();
+      await _remoteDataSource.signOut();
       return const Right(null);
     } on AuthException catch (e) {
       return Left(ServerFailure(message: e.message));
@@ -95,7 +87,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, void>> resetPassword(String email) async {
     try {
-      await _supabaseService.resetPassword(email);
+      await _remoteDataSource.resetPassword(email);
       return const Right(null);
     } on AuthException catch (e) {
       return Left(ServerFailure(message: e.message));
@@ -107,7 +99,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, UserModel?>> getCurrentUser() async {
     try {
-      final user = _supabaseService.currentUser;
+      final user = _remoteDataSource.currentUser;
       if (user == null) {
         return const Right(null);
       }
@@ -119,7 +111,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Stream<UserModel?> get authStateChanges {
-    return _supabaseService.authStateChanges.map((authState) {
+    return _remoteDataSource.authStateChanges.map((authState) {
       final user = authState.session?.user;
       return user != null ? UserModel.fromSupabaseUser(user) : null;
     });

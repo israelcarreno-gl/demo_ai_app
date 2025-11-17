@@ -35,9 +35,22 @@ class QuestionnaireGenerationRequest with _$QuestionnaireGenerationRequest {
     required int numberOfQuestions,
     required QuestionDifficulty difficulty,
     required String userId,
-    File? documentFile,
   }) = _QuestionnaireGenerationRequest;
 
   factory QuestionnaireGenerationRequest.fromJson(Map<String, dynamic> json) =>
       _$QuestionnaireGenerationRequestFromJson(json);
+}
+
+/// Wrapper class to hold both the request data and the file
+/// The file is not serialized to JSON
+class QuestionnaireGenerationData {
+  const QuestionnaireGenerationData({
+    required this.request,
+    required this.documentFile,
+    required this.storagePath,
+  });
+
+  final QuestionnaireGenerationRequest request;
+  final File documentFile;
+  final String storagePath;
 }

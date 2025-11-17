@@ -2,9 +2,12 @@ import 'dart:io';
 
 import 'package:demoai/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:demoai/features/questionnaire/data/models/questionnaire_generation_request.dart';
+import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_bloc.dart';
+import 'package:demoai/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 
 class QuestionnaireOptionsScreen extends StatefulWidget {
   const QuestionnaireOptionsScreen({
@@ -44,7 +47,6 @@ class _QuestionnaireOptionsScreenState
     }
 
     final request = QuestionnaireGenerationRequest(
-      documentFile: widget.documentFile,
       documentName: widget.fileName,
       documentSize: widget.fileSize,
       documentType: widget.fileType,
@@ -54,125 +56,150 @@ class _QuestionnaireOptionsScreenState
       userId: authState.user.id,
     );
 
-    // TODO(Isra): Send request to edge function
-    // For now, just show the generated request
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Request ready: ${request.toJson()}'),
-        duration: const Duration(seconds: 3),
-        backgroundColor: const Color(0xFF10B981),
-      ),
+    // Create data wrapper with file and storage path
+    final data = QuestionnaireGenerationData(
+      request: request,
+      documentFile: widget.documentFile,
+      storagePath: '${authState.user.id}/${widget.fileName}',
     );
 
-    // Navigate back to dashboard
-    context.go('/home');
+    // Trigger BLoC event to generate questionnaire
+    context.read<QuestionnaireBloc>().add(GenerateQuestionnaireRequested(data));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF1A1D24),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1A1D24),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.pop(),
-        ),
-        title: const Text(
-          'New Questionnaire',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      body: SafeArea(
-        child: Column(
+    return BlocConsumer<QuestionnaireBloc, QuestionnaireState>(
+      listener: (context, state) {
+        if (state is QuestionnaireGenerated) {
+          // Navigate to questionnaire response screen for answering
+          context.pushNamed(
+            'questionnaireResponse',
+            extra: state.questionnaire,
+          );
+        } else if (state is QuestionnaireError) {
+          // Show error snackbar
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+          );
+        }
+      },
+      builder: (context, state) {
+        return Stack(
           children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
+            Scaffold(
+              backgroundColor: const Color(0xFF1A1D24),
+              appBar: AppBar(
+                backgroundColor: const Color(0xFF1A1D24),
+                elevation: 0,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => context.pop(),
+                ),
+                title: const Text(
+                  'New Questionnaire',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              body: SafeArea(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Select Type',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTypeSelector(),
-                    const SizedBox(height: 32),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Number of Questions',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 8),
+                            const Text(
+                              'Select Type',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            _buildTypeSelector(),
+                            const SizedBox(height: 32),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Number of Questions',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  '$_numberOfQuestions',
+                                  style: const TextStyle(
+                                    color: Color(0xFF2563EB),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            SliderTheme(
+                              data: SliderThemeData(
+                                activeTrackColor: const Color(0xFF2563EB),
+                                inactiveTrackColor: const Color(0xFF252932),
+                                thumbColor: const Color(0xFF2563EB),
+                                overlayColor: const Color(
+                                  0xFF2563EB,
+                                ).withValues(alpha: 0.2),
+                                trackHeight: 4,
+                                thumbShape: const RoundSliderThumbShape(),
+                              ),
+                              child: Slider(
+                                value: _numberOfQuestions.toDouble(),
+                                min: 5,
+                                max: 30,
+                                divisions: 25,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _numberOfQuestions = value.round();
+                                  });
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                            const Text(
+                              'Difficulty',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            _buildDifficultySelector(),
+                          ],
                         ),
-                        Text(
-                          '$_numberOfQuestions',
-                          style: const TextStyle(
-                            color: Color(0xFF2563EB),
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    SliderTheme(
-                      data: SliderThemeData(
-                        activeTrackColor: const Color(0xFF2563EB),
-                        inactiveTrackColor: const Color(0xFF252932),
-                        thumbColor: const Color(0xFF2563EB),
-                        overlayColor: const Color(
-                          0xFF2563EB,
-                        ).withValues(alpha: 0.2),
-                        trackHeight: 4,
-                        thumbShape: const RoundSliderThumbShape(),
-                      ),
-                      child: Slider(
-                        value: _numberOfQuestions.toDouble(),
-                        min: 5,
-                        max: 30,
-                        divisions: 25,
-                        onChanged: (value) {
-                          setState(() {
-                            _numberOfQuestions = value.round();
-                          });
-                        },
                       ),
                     ),
-                    const SizedBox(height: 32),
-                    const Text(
-                      'Difficulty',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDifficultySelector(),
+                    _buildBottomButton(),
                   ],
                 ),
               ),
             ),
-            _buildBottomButton(),
+            // Loading overlay
+            if (state is QuestionnaireLoading)
+              ColoredBox(
+                color: Colors.black54,
+                child: Center(child: Lottie.asset(Assets.lottie.aiLoader)),
+              ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 
