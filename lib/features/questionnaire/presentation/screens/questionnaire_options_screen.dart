@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:demoai/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:demoai/features/questionnaire/data/models/questionnaire_generation_request.dart';
 import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_bloc.dart';
+import 'package:demoai/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 
 class QuestionnaireOptionsScreen extends StatefulWidget {
   const QuestionnaireOptionsScreen({
@@ -191,15 +193,9 @@ class _QuestionnaireOptionsScreenState
             ),
             // Loading overlay
             if (state is QuestionnaireLoading)
-              const ColoredBox(
+              ColoredBox(
                 color: Colors.black54,
-                child: Center(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Color(0xFF6C63FF),
-                    ),
-                  ),
-                ),
+                child: Center(child: Lottie.asset(Assets.lottie.aiLoader)),
               ),
           ],
         );

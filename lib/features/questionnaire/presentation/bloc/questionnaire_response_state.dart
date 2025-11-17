@@ -54,6 +54,7 @@ class QuestionnaireResponseSubmitted extends QuestionnaireResponseState {
     required this.correctCount,
     required this.totalLocal,
     required this.perQuestionCorrect,
+    required this.responses,
     this.accuracy,
     this.completionTime,
   });
@@ -61,6 +62,7 @@ class QuestionnaireResponseSubmitted extends QuestionnaireResponseState {
   final int correctCount;
   final int totalLocal;
   final Map<String, bool> perQuestionCorrect;
+  final Map<String, QuestionResponse> responses;
   final double? accuracy;
   final int? completionTime;
 
@@ -70,6 +72,7 @@ class QuestionnaireResponseSubmitted extends QuestionnaireResponseState {
     correctCount,
     totalLocal,
     perQuestionCorrect,
+    responses,
     accuracy,
     completionTime,
   ];

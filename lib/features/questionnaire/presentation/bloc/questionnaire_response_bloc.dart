@@ -236,8 +236,14 @@ class QuestionnaireResponseBloc
           log('Failed to update questionnaire: ${failure.message}');
         },
         (q) {
-          questionnaireFromServer = q;
-          log('Questionnaire updated successfully on server: ${q.toJson()}');
+          // The server response may not include nested questions; preserve them from the updatedQuestionnaire
+          final merged = q.questions == null || q.questions!.isEmpty
+              ? q.copyWith(questions: updatedQuestionnaire.questions)
+              : q;
+          questionnaireFromServer = merged;
+          log(
+            'Questionnaire updated successfully on server: ${merged.toJson()}',
+          );
           try {
             getIt<QuestionnaireBloc>().add(
               GetUserQuestionnairesRequested(questionnaireFromServer.userId),
@@ -262,6 +268,7 @@ class QuestionnaireResponseBloc
                 correctCount: correctCount,
                 totalLocal: localResponses.length,
                 perQuestionCorrect: perQuestionCorrect,
+                responses: stateCur.responses,
                 accuracy: accuracy,
                 completionTime: completionTime,
               ),
@@ -276,6 +283,7 @@ class QuestionnaireResponseBloc
             correctCount: correctCount,
             totalLocal: localResponses.length,
             perQuestionCorrect: perQuestionCorrect,
+            responses: stateCur.responses,
             accuracy: accuracy,
             completionTime: completionTime,
           ),

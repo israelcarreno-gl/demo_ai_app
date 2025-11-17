@@ -9,6 +9,7 @@ import 'package:demoai/features/dashboard/presentation/screens/dashboard_screen.
 import 'package:demoai/features/demo/presentation/screens/demo_screen.dart';
 import 'package:demoai/features/demo/presentation/screens/detail_screen.dart';
 import 'package:demoai/features/questionnaire/data/models/questionnaire_model.dart';
+import 'package:demoai/features/questionnaire/domain/entities/question_response.dart';
 import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_bloc.dart';
 import 'package:demoai/features/questionnaire/presentation/bloc/questionnaire_response_bloc.dart';
 import 'package:demoai/features/questionnaire/presentation/screens/document_preview_screen.dart';
@@ -151,12 +152,15 @@ class AppRouter {
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>?;
           final questionnaire = extra?['questionnaire'] as QuestionnaireModel?;
+          final responses =
+              extra?['responses'] as Map<String, QuestionResponse>?;
           return QuestionnaireResultScreen(
             questionnaire: questionnaire,
             correctCount: extra?['correctCount'] as int? ?? 0,
             totalLocal: extra?['totalLocal'] as int? ?? 0,
             perQuestionCorrect:
                 extra?['perQuestionCorrect'] as Map<String, bool>? ?? {},
+            responses: responses ?? {},
           );
         },
       ),

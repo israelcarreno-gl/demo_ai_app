@@ -76,6 +76,7 @@ class _QuestionnaireResponseScreenState
                   'correctCount': state.correctCount,
                   'totalLocal': state.totalLocal,
                   'perQuestionCorrect': state.perQuestionCorrect,
+                  'responses': state.responses,
                   'questionnaire': state.questionnaire,
                 },
               );
@@ -224,6 +225,7 @@ class _QuestionnaireResponseScreenState
                     child: Text(
                       label,
                       softWrap: true,
+                      overflow: TextOverflow.visible,
                       // Allow the label to expand vertically to show full content
                       style: TextStyle(
                         color: isSelected ? Colors.white : Colors.white70,
@@ -277,6 +279,7 @@ class _QuestionnaireResponseScreenState
           title: Text(
             label,
             softWrap: true,
+            overflow: TextOverflow.visible,
             style: TextStyle(color: isSelected ? Colors.white : Colors.white70),
           ),
         );

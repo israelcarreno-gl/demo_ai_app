@@ -38,11 +38,22 @@ class $AssetsImagesGen {
   List<AssetGenImage> get values => [flutterImage];
 }
 
+class $AssetsLottieGen {
+  const $AssetsLottieGen();
+
+  /// File path: assets/lottie/ai_loader.json
+  String get aiLoader => 'assets/lottie/ai_loader.json';
+
+  /// List of all assets
+  List<String> get values => [aiLoader];
+}
+
 class Assets {
   const Assets._();
 
   static const $AssetsEnvGen env = $AssetsEnvGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
+  static const $AssetsLottieGen lottie = $AssetsLottieGen();
 }
 
 class AssetGenImage {

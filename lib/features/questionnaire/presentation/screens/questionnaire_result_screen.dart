@@ -1,4 +1,5 @@
 import 'package:demoai/features/questionnaire/data/models/questionnaire_model.dart';
+import 'package:demoai/features/questionnaire/domain/entities/question_response.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,12 +9,14 @@ class QuestionnaireResultScreen extends StatelessWidget {
     required this.correctCount,
     required this.totalLocal,
     required this.perQuestionCorrect,
+    required this.responses,
     super.key,
   });
   final QuestionnaireModel? questionnaire;
   final int correctCount;
   final int totalLocal;
   final Map<String, bool> perQuestionCorrect;
+  final Map<String, QuestionResponse> responses;
 
   @override
   Widget build(BuildContext context) {
@@ -174,11 +177,35 @@ class QuestionnaireResultScreen extends StatelessWidget {
                 Column(
                   children: perQuestionCorrect.entries.map((entry) {
                     final isCorrect = entry.value;
-                    String title = entry.key;
+                    String title = 'Question';
+                    String answerText = '-';
                     if (questionnaire?.questions != null) {
                       for (final q in questionnaire!.questions!) {
                         if (q.id == entry.key) {
                           title = q.questionText;
+                          final resp = responses[entry.key];
+                          if (resp != null) {
+                            if (q.questionType == 'argument') {
+                              answerText = resp.answerText ?? '-';
+                            } else {
+                              final sel = resp.selectedOptionIndices ?? [];
+                              if (sel.isNotEmpty) {
+                                final labels = sel.map((i) {
+                                  if (q.options != null &&
+                                      i < q.options!.length) {
+                                    return q.options![i];
+                                  }
+                                  // Fallback: show letter for index
+                                  return String.fromCharCode(
+                                    'A'.codeUnitAt(0) + i,
+                                  );
+                                }).toList();
+                                answerText = labels.join(', ');
+                              } else {
+                                answerText = '-';
+                              }
+                            }
+                          }
                           break;
                         }
                       }
@@ -216,9 +243,22 @@ class QuestionnaireResultScreen extends StatelessWidget {
                           ),
                           const SizedBox(width: 12),
                           Expanded(
-                            child: Text(
-                              title,
-                              style: const TextStyle(color: Colors.white),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  title,
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  answerText,
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
