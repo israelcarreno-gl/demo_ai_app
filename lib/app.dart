@@ -10,10 +10,18 @@ import 'package:demoai/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  GoRouter? _router;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +37,10 @@ class MyApp extends StatelessWidget {
         builder: (context) {
           final authBloc = context.read<AuthBloc>();
 
+          // Create router once and keep the same instance during hot reloads
+          // so navigation state isn't reset when widgets rebuild.
+          _router ??= AppRouter.router(authBloc);
+
           return BlocBuilder<LocaleCubit, Locale>(
             builder: (context, locale) {
               return BlocBuilder<ThemeCubit, ThemeMode>(
@@ -41,7 +53,7 @@ class MyApp extends StatelessWidget {
                       return MaterialApp.router(
                         title: config.appName,
                         debugShowCheckedModeBanner: false,
-                        routerConfig: AppRouter.router(authBloc),
+                        routerConfig: _router,
 
                         locale: locale,
                         localizationsDelegates: const [
