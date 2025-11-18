@@ -37,8 +37,6 @@ class _MyAppState extends State<MyApp> {
         builder: (context) {
           final authBloc = context.read<AuthBloc>();
 
-          // Create router once and keep the same instance during hot reloads
-          // so navigation state isn't reset when widgets rebuild.
           _router ??= AppRouter.router(authBloc);
 
           return BlocBuilder<LocaleCubit, Locale>(
