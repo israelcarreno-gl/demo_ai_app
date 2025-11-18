@@ -41,6 +41,20 @@ assets/env/.env.prod
 /build/
 /coverage/
 
+# Generated code (codegen via build_runner, freezed, json_serializable, flutter_gen)
+# Freezed generated files
+**/*.freezed.dart
+# json_serializable generated files
+**/*.g.dart
+# FlutterGen (assets, fonts, etc.) generated classes
+lib/gen/
+# Generated localization / l10n output
+lib/l10n/generated/
+# Any builders output (safety belt) - usually under build/
+/**/generated/
+# Generated config from codegen (injectable, etc.)
+**/*.config.dart
+
 # FVM - Keep config but ignore Flutter SDK symlink
 .fvm/flutter_sdk
 .fvm/versions

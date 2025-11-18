@@ -376,9 +376,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   size: 18,
                                 ),
                                 const SizedBox(width: 8),
-                                Text(
-                                  q.documentName!,
-                                  style: const TextStyle(color: Colors.white70),
+                                Expanded(
+                                  child: Text(
+                                    q.documentName!,
+                                    style: const TextStyle(
+                                      color: Colors.white70,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
