@@ -201,10 +201,7 @@ class _QuestionnaireResponseScreenState
           },
           borderRadius: BorderRadius.circular(8),
           child: ConstrainedBox(
-            constraints: BoxConstraints(
-              // Prevent a single option from expanding beyond the screen width
-              maxWidth: screenWidth - 64,
-            ),
+            constraints: BoxConstraints(maxWidth: screenWidth - 64),
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -216,9 +213,27 @@ class _QuestionnaireResponseScreenState
               child: Row(
                 children: [
                   if (isSelected)
-                    const Icon(Icons.check, color: Colors.white, size: 16)
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white70, width: 2),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+
+                      child: const Icon(
+                        Icons.check,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    )
                   else
-                    const SizedBox(width: 16),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white70, width: 2),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      width: 16,
+                      height: 16,
+                    ),
                   const SizedBox(width: 8),
                   // Allow the label to wrap and not overflow horizontally
                   Flexible(
@@ -269,11 +284,21 @@ class _QuestionnaireResponseScreenState
               color: isSelected ? const Color(0xFF2563EB) : Colors.transparent,
               border: Border.all(
                 color: isSelected ? const Color(0xFF2563EB) : Colors.white24,
+                width: 2,
               ),
-              borderRadius: BorderRadius.circular(6),
+              shape: BoxShape.circle,
             ),
             child: isSelected
-                ? const Icon(Icons.check, color: Colors.white, size: 16)
+                ? Center(
+                    child: Container(
+                      width: 12,
+                      height: 12,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  )
                 : null,
           ),
           title: Text(
