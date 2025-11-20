@@ -1,6 +1,5 @@
 /// Custom exceptions for the application
 class ServerException implements Exception {
-
   ServerException({required this.message, this.statusCode});
   final String message;
   final int? statusCode;
@@ -10,7 +9,6 @@ class ServerException implements Exception {
 }
 
 class CacheException implements Exception {
-
   CacheException({required this.message});
   final String message;
 
@@ -19,7 +17,6 @@ class CacheException implements Exception {
 }
 
 class NetworkException implements Exception {
-
   NetworkException({this.message = 'No internet connection'});
   final String message;
 

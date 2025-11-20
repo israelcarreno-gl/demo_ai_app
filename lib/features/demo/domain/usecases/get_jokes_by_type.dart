@@ -4,7 +4,6 @@ import 'package:demoai/features/demo/domain/repositories/joke_repository.dart';
 
 /// Use case to get jokes by type
 class GetJokesByType {
-
   GetJokesByType(this._repository);
   final JokeRepository _repository;
 

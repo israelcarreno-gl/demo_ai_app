@@ -3,7 +3,6 @@ import 'package:equatable/equatable.dart';
 /// Joke entity - domain layer
 /// Represents a joke in the domain layer (clean architecture)
 class Joke extends Equatable {
-
   const Joke({
     required this.id,
     required this.type,

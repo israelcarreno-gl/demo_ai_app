@@ -15,7 +15,6 @@ class GetRandomJokeEvent extends JokeEvent {
 
 /// Event to fetch jokes by type
 class GetJokesByTypeEvent extends JokeEvent {
-
   const GetJokesByTypeEvent(this.type);
   final String type;
 

@@ -9,7 +9,6 @@ import 'package:demoai/features/demo/domain/repositories/joke_repository.dart';
 /// Implementation of JokeRepository
 /// Handles data operations and error handling
 class JokeRepositoryImpl implements JokeRepository {
-
   JokeRepositoryImpl(this._remoteDataSource);
   final JokeRemoteDataSource _remoteDataSource;
 
