@@ -3,7 +3,6 @@ import 'package:equatable/equatable.dart';
 /// Base class for all failures in the application
 /// Uses Equatable for value equality comparison
 abstract class Failure extends Equatable {
-
   const Failure({required this.message, this.statusCode});
   final String message;
   final int? statusCode;

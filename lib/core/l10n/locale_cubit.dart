@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Cubit to manage application locale (language)
 /// Persists locale preference using SharedPreferences
 class LocaleCubit extends Cubit<Locale> {
-
   LocaleCubit(this._prefs) : super(const Locale('en')) {
     _loadLocale();
   }

@@ -21,7 +21,6 @@ class JokeLoading extends JokeState {
 
 /// Success state for single joke
 class JokeLoaded extends JokeState {
-
   const JokeLoaded(this.joke);
   final Joke joke;
 
@@ -31,7 +30,6 @@ class JokeLoaded extends JokeState {
 
 /// Success state for multiple jokes
 class JokesLoaded extends JokeState {
-
   const JokesLoaded(this.jokes);
   final List<Joke> jokes;
 
@@ -41,7 +39,6 @@ class JokesLoaded extends JokeState {
 
 /// Error state
 class JokeError extends JokeState {
-
   const JokeError(this.message);
   final String message;
 

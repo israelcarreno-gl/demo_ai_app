@@ -5,7 +5,6 @@ import 'package:demoai/features/demo/domain/repositories/joke_repository.dart';
 /// Use case to get a random joke
 /// Implements the use case pattern from clean architecture
 class GetRandomJoke {
-
   GetRandomJoke(this._repository);
   final JokeRepository _repository;
 
