@@ -40,12 +40,11 @@ jobs:
       - name: Get packages
         run: flutter pub get
 
-      # Opcional: formato y análisis estático (descomenta si quieres que también bloqueen el PR)
-      # - name: Enforce formatting
-      #   run: dart format --set-exit-if-changed .
-      #
-      # - name: Static analysis
-      #   run: flutter analyze
+      - name: Enforce formatting
+        run: dart format --set-exit-if-changed .
+        
+      - name: Static analysis
+        run: flutter analyze
 
       - name: Run tests
         run: flutter test --coverage
